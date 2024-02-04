@@ -1,16 +1,12 @@
-# This is a sample Python script.
+from fastapi import FastAPI
+from services.elsalvador import ElSalvadorScraper
+app = FastAPI()
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+@app.get("/poc")
+async def poc(search: str = ""):
+    scraper = ElSalvadorScraper(search)
+    urls = scraper.init_search_urls()
+    content_urls = []
+    for url in   urls:
+        content_urls.append(scraper.get_url_content(url))
+    return content_urls
