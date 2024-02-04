@@ -1,5 +1,5 @@
 import json
-
+from bs4 import BeautifulSoup
 import requests
 
 params = {
@@ -32,3 +32,25 @@ for element in json_data["results"]:
     search_urls.append(element["url"])
 
 print(search_urls)
+
+
+def get_url_content(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        article = soup.find('article', class_='detail')
+        h1 = article.find('h1') if article else None
+        paragraphs = article.find_all('p') if article else []
+        news_text = ' '.join(paragraph.text for paragraph in paragraphs)
+        new = {
+            'title': h1.text if h1 else 'No se encontró el título',
+            'text': news_text}
+        return new
+
+
+print(get_url_content(search_urls[0]))
+print(get_url_content(search_urls[1]))
+print(get_url_content(search_urls[2]))
+print(get_url_content(search_urls[3]))
+print(get_url_content(search_urls[4]))
+print(get_url_content(search_urls[5]))
