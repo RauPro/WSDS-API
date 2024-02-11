@@ -31,7 +31,7 @@ class DiarioColatinoScrapper:
                 'text': news_text}
             return new
 if __name__ == '__main__':
-    cl = ElSalvadorScraper()
+    cl = DiarioColatinoScrapper()
     urls = cl.init_search_urls()
     for url in urls:
         print(cl.get_url_content(url))
