@@ -15,7 +15,7 @@ class ElSalvadorScraper:
             'cx': '006989654994863071413:2meag52dzuc',
             'q': query,
             'safe': 'off',
-            'cse_tok': 'AB-tC_7a0Ez39zxZ07Ron0rUqUwd:1707012182430',
+            'cse_tok': 'AB-tC_4JNMmpPNUijo3apdcF7Nah:1707271983065',
             'sort': 'date',
             'exp': 'cc',
             'fexp': '72485392,72485391',
