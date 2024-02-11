@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-class ElSalvadorScraper:
+class DiarioColatinoScrapper:
     def __init__(self, query='Feminicidio'):
         self.base_url = 'https://www.diariocolatino.com/?s=' + query
 
