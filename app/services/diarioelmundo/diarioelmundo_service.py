@@ -26,8 +26,9 @@ class DiarioElMundoScrapper:
             article = soup.find('div', class_='article-body')
             new = {
                 'title': h1.text if h1 else 'No se encontró el título',
-                'subtitle': subtitle.text if subtitle else 'No se encontró el subtítulo',
-                'text': article.text if article else 'No se encontró el texto del articulo',}
+                #'subtitle': subtitle.text if subtitle else 'No se encontró el subtítulo',
+                'text': article.text if article else 'No se encontró el texto del articulo',
+                'source':  'diario.elmundo.sv'}
             return new
 if __name__ == '__main__':
     cl = DiarioElMundoScrapper()

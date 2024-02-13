@@ -1,0 +1,1 @@
+from .diarioelsalvador_service import *

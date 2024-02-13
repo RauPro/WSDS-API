@@ -28,10 +28,8 @@ class DiarioColatinoScrapper:
             news_text = ' '.join(paragraph.text for paragraph in paragraphs)
             new = {
                 'title': h1.text if h1 else 'No se encontró el título',
-                'text': news_text}
+                'text': article.text if article else news_text,
+                'source':  'diariocolatino.com' if h1 else 'diariocolatino.com'
+            }
             return new
-if __name__ == '__main__':
-    cl = DiarioColatinoScrapper()
-    urls = cl.init_search_urls()
-    for url in urls:
-        print(cl.get_url_content(url))
+

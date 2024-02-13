@@ -29,7 +29,8 @@ class DiarioElSalvadorScrapper:
             news_text = ' '.join(paragraph.text for paragraph in paragraphs)
             article_data = {
                 'title': title.text.strip() if title else 'No se encontró el título',
-                'text': news_text
+                'text': news_text,
+                'source':  'diarioelsalvador.com' if title else 'diarioelsalvador.com'
             }
             return article_data
 
