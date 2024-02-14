@@ -5,6 +5,13 @@ import requests
 class ElSalvadorScraper:
     def __init__(self, query='Feminicidio', num_results=10):
         self.base_url = 'https://cse.google.com/cse/element/v1'
+        response = requests.get("https://cse.google.com/cse.js?cx=006989654994863071413:2meag52dzuc")
+        raw_ans = response.content.decode('utf-8')
+        index_cse = raw_ans.find('cse_token')
+        json_data = raw_ans[index_cse:]
+        start_token = json_data.find('AB')
+        end_token = json_data[start_token + 1:].find('"')
+        token = json_data[start_token:start_token+end_token+1]
         self.params = {
             'rsz': 'filtered_cse',
             'num': str(num_results),
@@ -15,7 +22,7 @@ class ElSalvadorScraper:
             'cx': '006989654994863071413:2meag52dzuc',
             'q': query,
             'safe': 'off',
-            'cse_tok': 'AB-tC_4JNMmpPNUijo3apdcF7Nah:1707271983065',
+            'cse_tok': token,
             'sort': 'date',
             'exp': 'cc',
             'fexp': '72485392,72485391',
@@ -23,6 +30,7 @@ class ElSalvadorScraper:
             'gs_l': 'partner-generic.12...591052.592998.2.600379.11.11.0.0.0.0.129.925.7j4.11.0.csems,nrl=10...0....1.34.partner-generic..37.9.753.tBzSfQsdAWs',
             'callback': 'google.search.cse.api11887',
         }
+
 
     def init_search_urls(self):
         response = requests.get(self.base_url, params=self.params)
@@ -48,3 +56,10 @@ class ElSalvadorScraper:
             return new
 
 
+if __name__ == '__main__':
+    scraper = ElSalvadorScraper("Feminicidio")
+    urls = scraper.init_search_urls()
+    content_urls = []
+    for url in urls:
+        content_urls.append(scraper.get_url_content(url))
+    print(content_urls)
