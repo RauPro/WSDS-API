@@ -3,6 +3,7 @@ from services.diariocolatino import DiarioColatinoScrapper
 from services.elsalvador import ElSalvadorScraper
 from services.diarioelmundo import DiarioElMundoScrapper
 from services.diarioelsalvador import DiarioElSalvadorScrapper
+from services.driver import classify_new
 
 app = FastAPI()
 
@@ -62,4 +63,8 @@ async def poc(search: str = "Feminicidio"):
     content_urls = []
     for url in urlsDiarioElMundoScrapper:
         content_urls.append(scraperDiarioElMundoScrapper.get_url_content(url))
+
+    for i in range(len(content_urls)):
+        content_urls[i]['tag'] = classify_new(content_urls[i]['text'])
+
     return content_urls
