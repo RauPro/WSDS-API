@@ -1,21 +1,20 @@
+import os
+
 import requests
 from bs4 import BeautifulSoup
 
+from ..driver.engine_controller import CustomEngine
+
+
 class DiarioElMundoScrapper:
-    def __init__(self, query='Feminicidio'):
-        self.base_url = 'https://diario.elmundo.sv/search?query=' + query
+    def __init__(self, query='Feminicidio', num_results = 10):
+        self.engine = 'WSDS-ElMundo'
+        self.query = query
+        self.num_results = num_results
 
     def init_search_urls(self):
-        response = requests.get(self.base_url)
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.content, 'html.parser')
-            search_div = soup.find('div', class_='mundo-search-widget')
-            articles = search_div.find_all('div', class_="article-title")
-            list_urls = []
-            for article in articles:
-                link = article.find('a')
-                list_urls.append(link['href'])
-            return list_urls
+        ce = CustomEngine(engine=os.environ.get(self.engine), query=self.query, num=self.num_results)
+        return ce.search()
 
     def get_url_content(self, url):
         response = requests.get(url)

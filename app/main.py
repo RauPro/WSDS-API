@@ -4,8 +4,11 @@ from services.elsalvador import ElSalvadorScraper
 from services.diarioelmundo import DiarioElMundoScrapper
 from services.diarioelsalvador import DiarioElSalvadorScrapper
 from services.driver import classify_new
+from env import env
 
 app = FastAPI()
+
+env.set_env()
 
 @app.get("/poc")
 async def poc(search: str = ""):
