@@ -1,21 +1,38 @@
-from fastapi import APIRouter
-from models.models import NoticeRequest, NoticeResponse
+from ..models.models import *
+from ..prompts.main_prompt import *
+import requests
+
+from ..services import DiarioElMundoScrapper
 
 
-router = APIRouter()
+# router = APIRouter()
 
-@router.post("/notices", response_model=NoticeResponse)
-async def create_notice(request: NoticeRequest):
+def create_notice(r: NoticeRequest):
+    query = requests.post(url="http://localhost:3000/ollama/api/generate", json={"prompt": r.prompt, "model": r.model, "stream": False},
+                         headers={"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBmNjg5MTM1LTI1OGUtNDAxNi04NDZkLTNmYjZkNjAyNmNlNyJ9.-jFD5ZMqhbSe6Eb_lmgNVoWLyBLr7b36wBgJIDJ3kGU"})
+    return query.json()
 
-    return NoticeResponse(
-        model=request.model,
-        created_at="2024-02-27T23:46:36.068271311Z",
-        response="*Clasificación:* Homicidio\n\n*Título:* Envían a prisión a hombre acusado de asesinar a su \"amigo\" en Chalatenango\n\n*Resumen:\nUn hombre se encuentra en prisión acusado de haber matado a su \"amigo\" en San Miguel de Mercedes, en Chalatenango. La víctima se quedó dormida en la acera y fue atacada con un hacha y un corvo.\n\nLugar de los hechos:* San Miguel de Mercedes, Chalatenango\n\n*Fuentes:* No se especifica en la noticia.\n\n*Temas:* Homicidio, asesinato, víctima, agresor, alcohol, estado de embriaguez.\n\n*Hechos violatorios:* No se especifica en la noticia.\n\n*Hipótesis de hechos:* No se especifica en la noticia.\n\n*Población vulnerable:* No se especifica en la noticia.\n\n*Tipo de arma:* Hacha, corvo.\n\n*Víctimas:* Una persona.\n\n*Victimario o presunto agresor:* Mario Gregorio Hernández.",
-        done=True,
-        context=[106, 1645],
-        total_duration=37812502352,
-        load_duration=206006,
-        prompt_eval_duration=196774000,
-        eval_count=212,
-        eval_duration=37615051000
-    )
+
+
+def poc(search: str = ""):
+    scraper = DiarioElMundoScrapper(search)
+    urls = scraper.init_search_urls()
+    content_urls = []
+    for url in urls:
+        content_urls.append(scraper.get_url_content(url))
+    return content_urls
+
+def test_create_notice():
+
+    list_news = poc("feminicidio")
+    for new in list_news:
+        new_ = NoticeRequest(
+            model="gemma:7b",
+            prompt=generate_prompt(new.get("title"), new.get("text")),
+            stream=False,
+        )
+        new["sheet"] = create_notice(new_)
+    #
+    print(list_news)
+    print("Done")
+    exit(0)

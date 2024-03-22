@@ -2,10 +2,12 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+
 class NoticeRequest(BaseModel):
     model: str
     prompt: str
     stream: Optional[bool] = False
+
 
 class NoticeResponse(BaseModel):
     model: str

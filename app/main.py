@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+
+from app.controllers.notices_controller import test_create_notice
 from services.diariocolatino import DiarioColatinoScrapper
 from services.elsalvador import ElSalvadorScraper
 from services.diarioelmundo import DiarioElMundoScrapper
@@ -71,3 +73,9 @@ async def poc(search: str = "Feminicidio"):
         content_urls[i]['tag'] = classify_new(content_urls[i]['text'])
 
     return content_urls
+
+
+
+
+if __name__ == '__main__':
+    test_create_notice()
