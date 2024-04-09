@@ -1,0 +1,109 @@
+GET http://127.0.0.1:8000/model_gemma
+Accept: application/json
+Connection: Keep-Alive
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-03T104947.500.txt
+
+###
+
+GET http://127.0.0.1:8000/model_gemma
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-03T104806.500.txt
+
+###
+
+GET http://127.0.0.1:8000/model_gemma
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-03T104656.500.txt
+
+###
+
+GET http://127.0.0.1:8000/model_gemma
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-03T104527.500.txt
+
+###
+
+GET http://127.0.0.1:8000/model_gemma
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-03T104455.404.json
+
+###
+
+GET http://127.0.0.1:8000/global/?search=Feminicidio
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-02T192017.200.json
+
+###
+
+GET http://127.0.0.1:8000/global/?search=Feminicídio
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-02T191846.200.json
+
+###
+
+GET http://127.0.0.1:8000/global/?search=Feminicído
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-02T191826.200.json
+
+###
+
+GET http://127.0.0.1:8000/global/?search=Feminicído
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-02T191816.200.json
+
+###
+
+GET http://127.0.0.1:8000/global/?search=Feminicido
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-02T183023.200.json
+
+###
+
+GET http://127.0.0.1:8000/global/?search=Feminicido
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-02T182323.200.json
+
+###
+
