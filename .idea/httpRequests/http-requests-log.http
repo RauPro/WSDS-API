@@ -1,3 +1,17 @@
+GET http://127.0.0.1:8000/global
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2024-04-14T205925.200.json
+
+###
+
+GET http://127.0.0.1:8000/global
+Accept: application/json
+
+###
 GET http://127.0.0.1:8000/model_gemma
 Accept: application/json
 Connection: Keep-Alive
