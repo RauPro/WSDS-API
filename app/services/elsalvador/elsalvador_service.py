@@ -26,7 +26,9 @@ class ElSalvadorScraper:
             news_text = ' '.join(paragraph.text for paragraph in paragraphs)
             new = {
                 'title': h1.text if h1 else 'No se encontró el título',
-                'text': news_text}
+                'text': news_text,
+                'url': url
+                }
             return new
 
 
