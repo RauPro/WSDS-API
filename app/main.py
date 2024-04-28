@@ -1,8 +1,12 @@
 # Importing necessary libraries for web application setup
+import json
 import random
+import time
+from typing import Generator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import StreamingResponse
 
 # Importing specific scrapping services
 from app.controllers.notices_controller import test_create_notice
@@ -70,25 +74,36 @@ async def diarioelsalvador(search: str = "Feminicidio"):
 
 # Route for global search across multiple sources
 @app.get("/global")
-async def global_search(search: str = "Feminicidio"):
+async def global_search(search: str = "Feminicidio") -> StreamingResponse:
     scrapers = [
         DiarioElSalvadorScrapper(search),
         DiarioColatinoScrapper(search),
         DiarioElMundoScrapper(search)
     ]
-    content_urls = []
-    for scraper in scrapers:
-        scraper_urls = await perform_scraping(scraper)
-        for url_content in scraper_urls:
-            if url_content != None:
-                url_content['tag'] = search
-        content_urls.extend(scraper_urls)
-    content_urls = [url for url in content_urls if url is not None]
-    random.shuffle(content_urls)
-    return content_urls
+    scrapersName = [
+        "Diario El Salvador",
+        "Diario Colatino",
+        "Diario El mundo"
+    ]
+    async def event_stream() -> Generator[str, None, None]:
+        content_urls = []
+        for i, scraper in enumerate(scrapers):
+            scraper_urls = await perform_scraping(scraper)
+            for url_content in scraper_urls:
+                if url_content is not None:
+                    url_content['tag'] = search
+                    yield f"data: {json.dumps({'status': 'starting', 'scraper': scrapersName[i]})}\n\n"
+            content_urls.extend(scraper_urls)
+            yield f"data: {json.dumps({'status': 'completed', 'scraper': scrapersName[i], 'results': [url for url in scraper_urls if url is not None]})}\n\n"
+
+        random.shuffle(content_urls)
+        content_urls = [url for url in content_urls if url is not None]
+        yield f"data: {json.dumps({'status': 'final', 'results': content_urls})}\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
-# Simplified static global search for demonstration purposes
+
 def global_search_static(search: str = "Feminicidio"):
     scrapers = [
         DiarioElSalvadorScrapper(search),
@@ -104,12 +119,13 @@ def global_search_static(search: str = "Feminicidio"):
     return content_urls
 
 
-# Route to integrate with a hypothetical model for creating notices
+
+
 @app.get("/model_gemma")
 async def model_gemma(search: str = "Feminicidio"):
     return test_create_notice(global_search_static())
 
 
-# Entry point when run as a main program
+
 if __name__ == '__main__':
     print("TEST JOIN")
