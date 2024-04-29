@@ -11,9 +11,14 @@ from .services.elsalvador import ElSalvadorScraper
 from .services.diarioelmundo import DiarioElMundoScrapper
 from .services.diarioelsalvador import DiarioElSalvadorScrapper
 from .env import env
+from app.services.db_service import DatabaseService
 
 # Initializing FastAPI application
 app = FastAPI()
+
+@app.on_event("startup")
+def startup_event():
+    DatabaseService.initialize()
 
 # Setting up environment variables
 env.set_env()
