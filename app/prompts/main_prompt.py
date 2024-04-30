@@ -1,41 +1,39 @@
-def generate_prompt(title, description):
-    prompt = f"""
+def generate_prompt(title, description, field):
+    base_prompt = f"""
     Noticia:
-Título:  {title}
-Descripción:  {description}
+    Título: {title}
+    Descripción: {description}
 
-
-Analiza la noticia proporcionada siguiendo estos pasos y criterios para determinar si clasifica como un caso de homicidio, y luego extrae la información específica solicitada:
-
-1. Clasificación de la Noticia:
-
-Primero, identifica si la noticia describe un homicidio basándote en el análisis del título y la descripción mediante la detección de palabras clave organizadas en orden de prioridad. Utiliza las siguientes listas de palabras clave para evaluar el contenido:
-
-Orden de Prioridad 1: Homicidio, feminicidio, osamenta, fosa clandestina, grupo de exterminio.
-Orden de Prioridad 2: Homicida, feminicida.
-Orden de Prioridad 3: Crimen, sin vida, cuerpo sin vida, cuerpo en estado de descomposición, cadáver en estado de descomposición, estado de putrefacción, semienterrado, cadáver, cuerpo.
-Orden de Prioridad 4: Arma blanca, arma de fuego, machete, cuchillo, arma contundente, corvo.
-Orden de Prioridad 5: Acto de intolerancia, alcohol, droga, privada de libertad, defensa propia, rencilla personal, legítima defensa, violencia, sangre, ataque de esquizofrenia, ataque.
-Segundo, si identificas alguna de estas palabras clave, especialmente aquellas de prioridad más alta, determina que la noticia describe un homicidio.
-
-2. Extracción de Información:
-
-Si la noticia es clasificada como un homicidio, procede a extraer y organizar la siguiente información específica, si está disponible en el contenido:
-
-Clasificación: Homicidio
-Título: Extrae el título de la noticia.
-Resumen: Proporciona un breve resumen de la noticia.
-Lugar de los Hechos: Dónde ocurrió el suceso.
-Fuentes: Cita las fuentes de información.
-Temas: Los temas principales tratados.
-Hechos Violatorios: Detalles específicos sobre la violación a la ley.
-Hipótesis de Hechos: Cualquier teoría o suposición presentada.
-Población Vulnerable: Grupos en riesgo mencionados.
-Tipo de Arma: Especifica el tipo de arma, si se menciona.
-Víctimas: Identifica a las víctimas, si es posible.
-Victimario o Presunto Agresor: Nombre del agresor, si se menciona.
-En cualquier caso que la información no esté disponible o no se especifique en la noticia, indica "N/A" para ese campo.
-
+    Por favor, analiza y proporciona la siguiente información sobre la noticia:
     """
-    return prompt
 
+    field_prompts = {
+        "classification": "Clasifica si la noticia describe un homicidio.",
+        "title": "Extrae el título de la noticia.",
+        "summary": "Proporciona un breve resumen de la noticia.",
+        "location_of_incident": "Dónde ocurrió el suceso.",
+        "sources": "Cita las fuentes de información.",
+        "themes": "Los temas principales tratados.",
+        "violative_facts": "Detalles específicos sobre la violación a la ley.",
+        "hypothesis_of_facts": "Cualquier teoría o suposición presentada.",
+        "vulnerable_population": "Grupos en riesgo mencionados.",
+        "type_of_weapon": "Especifica el tipo de arma, si se menciona.",
+        "victims": "Identifica a las víctimas, si es posible.",
+        "perpetrator_or_suspected_aggressor": "Nombre del agresor, si se menciona."
+    }
+
+    specific_prompt = field_prompts.get(field, "Por favor, verifica la noticia y proporciona información relevante.")
+    full_prompt = f"{base_prompt}{specific_prompt}"
+
+    return full_prompt
+
+
+def create_notice(title, description, fields):
+
+    for field in fields:
+        prompt = generate_prompt(title, description, field)
+        print(prompt)
+
+
+create_notice("Local man arrested", "A local man was arrested yesterday on suspicion of murder.",
+              ["classification", "summary", "location_of_incident"])
