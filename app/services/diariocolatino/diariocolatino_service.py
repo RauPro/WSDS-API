@@ -28,7 +28,8 @@ class DiarioColatinoScrapper:
             new = {
                 'title': h1.text if h1 else 'No se encontró el título',
                 'text': article.text if article else news_text,
-                'source':  'diariocolatino.com' if h1 else 'diariocolatino.com'
+                'source':  'diariocolatino.com' if h1 else 'diariocolatino.com',
+                'url': url
             }
             return new
 
