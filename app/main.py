@@ -7,22 +7,23 @@ from typing import Generator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import StreamingResponse
+from fastapi_pagination import Page, add_pagination, paginate
 
+from app.controllers import indicators_controller
 # Importing specific scrapping services
 from app.controllers.notices_controller import test_create_notice
+from app.services.db_service import DatabaseService
 from .services.diariocolatino import DiarioColatinoScrapper
 from .services.elsalvador import ElSalvadorScraper
 from .services.diarioelmundo import DiarioElMundoScrapper
 from .services.diarioelsalvador import DiarioElSalvadorScrapper
 from .env import env
-from app.services.db_service import DatabaseService
 
 # Initializing FastAPI application
 app = FastAPI()
 
-@app.on_event("startup")
-def startup_event():
-    DatabaseService.initialize()
+#INIT DATABASE
+DatabaseService()
 
 # Setting up environment variables
 env.set_env()
@@ -32,7 +33,7 @@ origins = [
     "http://127.0.0.1:8000",
     "http://localhost:4200"
 ]
-
+add_pagination(app)
 # Configuring CORS middleware
 app.add_middleware(CORSMiddleware,
                    allow_origins=origins,
@@ -130,7 +131,8 @@ def global_search_static(search: str = "Feminicidio"):
 async def model_gemma(search: str = "Feminicidio"):
     return test_create_notice(global_search_static())
 
-
+app.include_router(indicators_controller.router)
+add_pagination(app)
 
 if __name__ == '__main__':
     print("TEST JOIN")
