@@ -36,3 +36,17 @@ class DatabaseService:
             logging.error("Database not initialized.")
             raise Exception("Database is not initialized.")
         return cls.db["prompts"]
+
+    @classmethod
+    def get_news_collection(cls):
+        if cls.db is None:
+            logging.error("Database not initialized.")
+            raise Exception("Database is not initialized.")
+        return cls.db["news"]
+
+    @classmethod
+    def get_sheets_collection(cls):
+        if cls.db is None:
+            logging.error("Database not initialized.")
+            raise Exception("Database is not initialized.")
+        return cls.db["sheets"]

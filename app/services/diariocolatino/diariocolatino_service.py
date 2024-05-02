@@ -29,7 +29,8 @@ class DiarioColatinoScrapper:
                 'title': h1.text if h1 else 'No se encontró el título',
                 'text': article.text if article else news_text,
                 'source':  'diariocolatino.com' if h1 else 'diariocolatino.com',
-                'url': url
+                'url': url,
+                'sheet_id': url
             }
             return new
 

@@ -27,7 +27,8 @@ class ElSalvadorScraper:
             new = {
                 'title': h1.text if h1 else 'No se encontró el título',
                 'text': news_text,
-                'url': url
+                'url': url,
+                'sheet_id': url
                 }
             return new
 

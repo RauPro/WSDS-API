@@ -29,3 +29,22 @@ class Prompt(BaseModel):
     indicator_name: str
     prompt: str
     id: Optional[str] = ObjectId()
+
+
+class Sheet(BaseModel):
+    indicator_name: str
+    response: str
+    id: str
+
+class SheetEntry(BaseModel):
+    sheet: List[Sheet]
+    id: str
+class New(BaseModel):
+    title: str
+    text: str
+    source: str
+    url: str
+    tag: str
+    sheet_id: str
+    date: str
+
