@@ -28,7 +28,8 @@ class DiarioElSalvadorScrapper:
                 'title': title.text.strip() if title else 'No se encontró el título',
                 'text': news_text,
                 'source':  'diarioelsalvador.com' if title else 'diarioelsalvador.com',
-                'url': url
+                'url': url,
+                'sheet_id': url
             }
             return article_data
 

@@ -2,14 +2,19 @@
 import json
 import random
 import time
+from datetime import datetime
 from typing import Generator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import StreamingResponse
+from fastapi_pagination import Page, add_pagination, paginate
 
+from app.controllers import indicators_controller, news_controller
 # Importing specific scrapping services
 from app.controllers.notices_controller import test_create_notice
+from app.services.db_service import DatabaseService
+from app.services.driver.news_crud import create_new
 from .services.diariocolatino import DiarioColatinoScrapper
 from .services.elsalvador import ElSalvadorScraper
 from .services.diarioelmundo import DiarioElMundoScrapper
@@ -19,6 +24,9 @@ from .env import env
 # Initializing FastAPI application
 app = FastAPI()
 
+#INIT DATABASE
+DatabaseService()
+
 # Setting up environment variables
 env.set_env()
 
@@ -27,7 +35,7 @@ origins = [
     "http://127.0.0.1:8000",
     "http://localhost:4200"
 ]
-
+add_pagination(app)
 # Configuring CORS middleware
 app.add_middleware(CORSMiddleware,
                    allow_origins=origins,
@@ -92,6 +100,9 @@ async def global_search(search: str = "Feminicidio") -> StreamingResponse:
             for url_content in scraper_urls:
                 if url_content is not None:
                     url_content['tag'] = search
+                    url_content['date'] = datetime.today().strftime('%Y-%m-%d')
+                    saved = create_new(url_content)
+                    yield f"data: {json.dumps({'saved': saved, 'scraper': scrapersName[i]})}\n\n"
                     yield f"data: {json.dumps({'status': 'starting', 'scraper': scrapersName[i]})}\n\n"
             content_urls.extend(scraper_urls)
             yield f"data: {json.dumps({'status': 'completed', 'scraper': scrapersName[i], 'results': [url for url in scraper_urls if url is not None]})}\n\n"
@@ -114,18 +125,31 @@ def global_search_static(search: str = "Feminicidio"):
     for scraper in scrapers:
         scraper_urls = [scraper.get_url_content(url) for url in scraper.init_search_urls()]
         for url_content in scraper_urls:
-            url_content['tag'] = search
+            if url_content is not None:
+                url_content['tag'] = search
         content_urls.extend(scraper_urls)
     return content_urls
 
 
+mocked_list = [
+        {
+            "title": "*6El Salvador feminicido",
+            "text": "\n\nCompartir\n\n Facebook\n Twitter\n Google +\n\n\n\n\n\nArtículos relacionados\n\n\n\n\n\n \n\n\nSesiona la nueva legislatura 2024-2027 \n1 mayo, 2024\n\n\n\n\n \n\n\nColombia rompimiento de relaciones diplomáticas con Israel\n1 mayo, 2024\n\n\n\n\n \n\n\nFranceses marchan en día de los trabajadores, reportan arrestos\n1 mayo, 2024\n\n\n\n\n\n",
+            "source": "diariocolatino.com",
+            "url": "https://www.diariocolatino.com/historia-universal-un-vistazo-al-pasado-desde-la-causa-popular/6el-salvador-feminicido/",
+            "tag": "Feminicido"
+        },
+    ]
 
 
 @app.get("/model_gemma")
 async def model_gemma(search: str = "Feminicidio"):
-    return test_create_notice(global_search_static())
+    #return test_create_notice(global_search_static())
+    return test_create_notice(mocked_list)
 
-
+app.include_router(indicators_controller.router)
+app.include_router(news_controller.router)
+add_pagination(app)
 
 if __name__ == '__main__':
     print("TEST JOIN")

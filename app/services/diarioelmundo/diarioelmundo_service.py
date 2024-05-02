@@ -28,7 +28,8 @@ class DiarioElMundoScrapper:
                 #'subtitle': subtitle.text if subtitle else 'No se encontró el subtítulo',
                 'text': article.text if article else 'No se encontró el texto del articulo',
                 'source':  'diario.elmundo.sv',
-                'url': url
+                'url': url,
+                'sheet_id': url
                 }
             return new
 if __name__ == '__main__':
