@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 
 from ..models.enums import GemmaMode, PrioritySheet
 from ..models.models import *
@@ -6,6 +7,7 @@ from ..prompts.main_prompt import *
 import requests
 import os
 from ..services import DiarioElMundoScrapper
+from ..services.driver.news_crud import create_new
 
 
 # router = APIRouter()
@@ -23,6 +25,10 @@ async def test_create_notice(list_news: [New], gemma_mode: str):
         ans =[]
         for new in list_news:
             new_ = generate_answer(new)
+            new_to_save = deepcopy(new)
+            new_to_save["sheet_id"] = new.get("url")
+            debugger = create_new(new_to_save)
+            print(debugger)
             new["sheet"] = {}
             new["sheet"]["indicators"] = new_
             new["sheet"]["priority"] = PrioritySheet.ACCURATE.value
@@ -35,6 +41,10 @@ async def test_create_notice(list_news: [New], gemma_mode: str):
     elif gemma_mode == GemmaMode.STANDARD.value:
         ans = []
         for new in list_news:
+            new_to_save = deepcopy(new)
+            new_to_save["sheet_id"] = new.get("url")
+            debugger = create_new(new_to_save)
+            print(debugger)
             new = generate_standard_answer(new)
             new["sheet"]["priority"] = PrioritySheet.STANDARD.value
             ans.append(new)
