@@ -1,8 +1,13 @@
+import json
+from copy import deepcopy
+
+from ..models.enums import GemmaMode, PrioritySheet
 from ..models.models import *
 from ..prompts.main_prompt import *
 import requests
 import os
 from ..services import DiarioElMundoScrapper
+from ..services.driver.news_crud import create_new
 
 
 # router = APIRouter()
@@ -15,14 +20,36 @@ def create_notice(r: NoticeRequest):
     return query.json()
 
 
-def test_create_notice(list_news: [New]):
-    ans = []
-    for new in list_news:
-        new_ = generate_answer(new)
-        ans.append(new_)
-    print(ans)
-    print("Done")
-    return ans
+async def test_create_notice(list_news: [New], gemma_mode: str):
+    if gemma_mode == GemmaMode.ACCURATE.value:
+        ans =[]
+        for new in list_news:
+            new_ = generate_answer(new)
+            new_to_save = deepcopy(new)
+            new_to_save["sheet_id"] = new.get("url")
+            debugger = create_new(new_to_save)
+            print(debugger)
+            new["sheet"] = {}
+            new["sheet"]["indicators"] = new_
+            new["sheet"]["priority"] = PrioritySheet.ACCURATE.value
+            new["sheet"]["id"] = new.get("url")
+            ans.append(new)
+            yield f"data: {json.dumps(ans)}\n\n"
+        print(ans)
+        print("Done")
+        #return ans
+    elif gemma_mode == GemmaMode.STANDARD.value:
+        ans = []
+        for new in list_news:
+            new_to_save = deepcopy(new)
+            new_to_save["sheet_id"] = new.get("url")
+            debugger = create_new(new_to_save)
+            print(debugger)
+            new = generate_standard_answer(new)
+            new["sheet"]["priority"] = PrioritySheet.STANDARD.value
+            ans.append(new)
+            yield f"data: {json.dumps(ans)}\n\n"
+
 
 
 def generate_prompt(title, description, field):
@@ -55,3 +82,64 @@ def generate_answer(new):
         print(new_)
         print()
     return ans
+
+
+def classification_standard_model(raw_sheet, url):
+    data = {
+        "Clasificación": "N/A",
+        "Título": "N/A",
+        "Resumen": "N/A",
+        "Lugar de los Hechos": "N/A",
+        "Fuentes": "N/A",
+        "Temas": "N/A",
+        "Hechos Violatorios": "N/A",
+        "Hipótesis de Hechos": "N/A",
+        "Población Vulnerable": "N/A",
+        "Tipo de Arma": "N/A",
+        "Víctimas": "N/A",
+        "Victimario o Presunto Agresor": "N/A"
+    }
+
+    pattern = {
+        "Clasificación": r"Clasificación:\s*(.*)\s*\n",
+        "Título": r"Título:\s*(.*)\s*\n",
+        "Resumen": r"Resumen:\s*(.*)\s*\n",
+        "Lugar de los Hechos": r"Lugar de los Hechos:\s*(.*)\s*\n",
+        "Fuentes": r"Fuentes:\s*(.*)\s*\n",
+        "Temas": r"Temas:\s*(.*)\s*\n",
+        "Hechos Violatorios": r"Hechos Violatorios:\s*(.*)\s*\n",
+        "Hipótesis de Hechos": r"Hipótesis de Hechos:\s*(.*)\s*\n",
+        "Población Vulnerable": r"Población Vulnerable:\s*(.*)\s*\n",
+        "Tipo de Arma": r"Tipo de Arma:\s*(.*)\s*\n",
+        "Víctimas": r"Víctimas:\s*(.*)\s*\n",
+        "Victimario o Presunto Agresor": r"Victimario o Presunto Agresor:\s*(.*)\s*\n"
+    }
+
+    for field, val in pattern.items():
+        match = re.search(val, raw_sheet, re.MULTILINE)
+        if match:
+            data[field] = match.group(1).strip()
+
+    ans = []
+    for key, value in data.items():
+        response ={
+            "indicator_name": key,
+            "response": value
+        }
+        ans.append(response)
+    response = {
+        "indicators": ans,
+        "id": url
+    }
+    return response
+
+def generate_standard_answer(new):
+    new_ = NoticeRequest(
+        model="gemma:7b",
+        prompt=generate_prompt_standard(new.get("title"), new.get("text")),
+        stream=False,
+    )
+    get_raw_ans = create_notice(new_)
+    new["sheet"] = classification_standard_model(get_raw_ans.get("response"), new.get("url"))
+    return new
+
