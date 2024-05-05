@@ -21,6 +21,7 @@ def create_notice(r: NoticeRequest):
 
 
 async def test_create_notice(list_news: [New], gemma_mode: str):
+    yield f"data: True\n\n"
     if gemma_mode == GemmaMode.ACCURATE.value:
         ans =[]
         for new in list_news:
@@ -28,14 +29,15 @@ async def test_create_notice(list_news: [New], gemma_mode: str):
             new_to_save = deepcopy(new)
             new_to_save["sheet_id"] = new.get("url")
             debugger = create_new(new_to_save)
-            print(debugger)
+            #print(debugger)
             new["sheet"] = {}
+            new["sheet_id"] = new.get("url")
             new["sheet"]["indicators"] = new_
             new["sheet"]["priority"] = PrioritySheet.ACCURATE.value
             new["sheet"]["id"] = new.get("url")
             ans.append(new)
             yield f"data: {json.dumps(ans)}\n\n"
-        print(ans)
+        #print(ans)
         print("Done")
         #return ans
     elif gemma_mode == GemmaMode.STANDARD.value:
@@ -44,8 +46,9 @@ async def test_create_notice(list_news: [New], gemma_mode: str):
             new_to_save = deepcopy(new)
             new_to_save["sheet_id"] = new.get("url")
             debugger = create_new(new_to_save)
-            print(debugger)
+            #print(debugger)
             new = generate_standard_answer(new)
+            new["sheet_id"] = new.get("url")
             new["sheet"]["priority"] = PrioritySheet.STANDARD.value
             ans.append(new)
             yield f"data: {json.dumps(ans)}\n\n"
@@ -79,8 +82,8 @@ def generate_answer(new):
         gemma_ans = create_notice(new_)
         new_generated["response"] = gemma_ans["response"]
         ans.append(new_generated)
-        print(new_)
-        print()
+        #print(new_)
+        #print()
     return ans
 
 
