@@ -143,9 +143,9 @@ mocked_list = [
 
 
 @app.get("/model_gemma")
-async def model_gemma(search: str = "Feminicidio"):
+async def model_gemma(search: str = "Feminicidio", gemma_mode: str = "accurate"):
     #return test_create_notice(global_search_static())
-    return test_create_notice(mocked_list)
+    return test_create_notice(mocked_list, gemma_mode)
 
 app.include_router(indicators_controller.router)
 app.include_router(news_controller.router)

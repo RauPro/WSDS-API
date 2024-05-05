@@ -34,10 +34,10 @@ class Prompt(BaseModel):
 class Sheet(BaseModel):
     indicator_name: str
     response: str
-    id: str
 
 class SheetEntry(BaseModel):
-    sheet: List[Sheet]
+    indicators: List[Sheet]
+    priority: int
     id: str
 class New(BaseModel):
     title: str
