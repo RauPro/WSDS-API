@@ -139,13 +139,20 @@ mocked_list = [
             "url": "https://www.diariocolatino.com/historia-universal-un-vistazo-al-pasado-desde-la-causa-popular/6el-salvador-feminicido/",
             "tag": "Feminicido"
         },
+    {
+    "title": "Hombre enamorado de una mujer ficticia confiesa el asesinato de su compañera en Francia",
+    "text": "Un joven adulto fue acusado el miércoles en Francia de haber asesinado a su compañera, con el fin de vivir una relación con una supuesta mujer de quien se había enamorado en internet y que resultó ser un estafador sentimental. El individuo nacido en 1994, empleado técnico de una alcaldía, reconoció haber planeado el crimen para poder «concretar» su relación virtual y afirmó que «lamentaba»  su acción, señaló en un comunicado la Fiscalía de Boulogne-sur-Mer (norte). La víctima, enfermera en una residencia de ancianos, nacida en 1995, fue hallada muerta el 28 de enero en el domicilio de la pareja, en la localidad de Beussent, con «heridas en el torso». Fue su propio compañero quien llamó a los gendarmes, asegurando que todo había ocurrido cuando se ausentó para ir a comprar pan, probablemente con fines de robo dada la desaparición de una alcancía. Pero la investigación descartó esa hipótesis y acusó al hombre, que «mantenía una relación afectiva en internet» con una persona de la cual ignoraba su verdadera identidad. Según el diario Le Parisien, que reveló el caso, esa pasión virtual se presentaba con el nombre de Béatrice Leroux, comerciante en la ciudad de Brest. La supuesta amante resultó ser un personaje ficticio creado por un estafador emocional, probablemente basado en Costa de Marfil, que había logrado que su enamorado le enviase 2.200 euros (unos 2.400 dólares). Numerosas bandas criminales que operan desde África occidental se especializan en estafas por internet, muchas veces creando fuertes vínculos afectivos con las personas contactadas. Francia registra en promedio un feminicidio cada tres días. El año pasado se contabilizaron 94.",
+    "source": "diarioelsalvador.com",
+    "url": "fake_url",
+            "tag": "Feminicido"
+    }
     ]
 
 
 @app.get("/model_gemma")
 async def model_gemma(search: str = "Feminicidio", gemma_mode: str = "accurate"):
     #return test_create_notice(global_search_static())
-    return test_create_notice(mocked_list, gemma_mode)
+    return StreamingResponse(test_create_notice(mocked_list, gemma_mode), media_type="text/event-stream")
 
 app.include_router(indicators_controller.router)
 app.include_router(news_controller.router)

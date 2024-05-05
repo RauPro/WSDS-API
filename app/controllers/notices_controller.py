@@ -1,3 +1,5 @@
+import json
+
 from ..models.enums import GemmaMode, PrioritySheet
 from ..models.models import *
 from ..prompts.main_prompt import *
@@ -16,7 +18,7 @@ def create_notice(r: NoticeRequest):
     return query.json()
 
 
-def test_create_notice(list_news: [New], gemma_mode: str):
+async def test_create_notice(list_news: [New], gemma_mode: str):
     if gemma_mode == GemmaMode.ACCURATE.value:
         ans =[]
         for new in list_news:
@@ -26,16 +28,17 @@ def test_create_notice(list_news: [New], gemma_mode: str):
             new["sheet"]["priority"] = PrioritySheet.ACCURATE.value
             new["sheet"]["id"] = new.get("url")
             ans.append(new)
+            yield f"data: {json.dumps(ans)}\n\n"
         print(ans)
         print("Done")
-        return ans
+        #return ans
     elif gemma_mode == GemmaMode.STANDARD.value:
         ans = []
         for new in list_news:
             new = generate_standard_answer(new)
             new["sheet"]["priority"] = PrioritySheet.STANDARD.value
             ans.append(new)
-        return ans
+            yield f"data: {json.dumps(ans)}\n\n"
 
 
 
