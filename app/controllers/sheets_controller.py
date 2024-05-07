@@ -8,8 +8,12 @@ from ..services.driver.sheets_crud import create_sheet, get_sheets, get_sheet_by
 router = APIRouter()
 @router.post("/sheets/")
 def create(sheet: SheetEntry):
-    create_sheet(sheet)
-    return {"message": "sheet created successfully", "data": sheet.dict()}
+    if sheet.priority > 3:
+        create_sheet(sheet);
+        return {"message": "sheet created successfully", "data": sheet.dict()}
+    else:    
+     return {"message": "sorry we can't save this sheet"}
+    
 
 @router.get("/sheets/")
 def read_all():
