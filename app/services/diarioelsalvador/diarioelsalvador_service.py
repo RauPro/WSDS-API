@@ -3,16 +3,22 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from ..driver.engine_controller import CustomEngine
+from datetime import date
+from datetime import datetime
 
 
 class DiarioElSalvadorScrapper:
-    def __init__(self, query='Feminicidio', num_results = 10):
+    def __init__(self, query='Feminicidio',  
+                 date_start: str = datetime.today().strftime('%Y-%m-%d'), 
+                 date_end: str = datetime.today().strftime('%Y-%m-%d'), num_results = 10):
         self.engine = 'WSDS-DiarioElSalvador'
         self.query = query
+        self.date_start = date_start
+        self.date_end = date_end
         self.num_results = num_results
         
     def init_search_urls(self):
-        ce = CustomEngine(engine=os.environ.get(self.engine), query=self.query, num=self.num_results)
+        ce = CustomEngine(engine=os.environ.get(self.engine), query=self.query, date_start = self.date_start, date_end= self.date_end, num=self.num_results)
         return ce.search()
 
 
