@@ -1,4 +1,5 @@
 import os
+import re
 
 import requests
 from bs4 import BeautifulSoup
@@ -30,7 +31,7 @@ class DiarioColatinoScrapper:
             h1 = soup.find('h1', class_='name post-title entry-title')
             h1 = h1 if h1 and h1.find('span') else None
             article = soup.find('div', class_='entry')
-            date_news = soup.find('span', class_='tie-date').text
+            date_news = date_formate(soup.find('span', class_='tie-date').text)
             paragraphs = article.find_all('p') if article else []
             news_text = ' '.join(paragraph.text for paragraph in paragraphs)
             new = {
@@ -43,3 +44,33 @@ class DiarioColatinoScrapper:
             }
             return new
 
+
+def date_formate(date_text):
+    # Expresión regular para extraer día, mes y año
+    exp_regular = r'(\d+)\s+(\w+),\s+(\d+)'
+    match = re.match(exp_regular, date_text)
+
+    if match:
+        day = match.group(1)
+        month = match.group(2)
+        year = match.group(3)
+
+        # Mapear el nombre del mes a su número correspondiente
+        months = {
+            'enero': 1, 'febrero': 2, 'marzo': 3, 'abril': 4,
+            'mayo': 5, 'junio': 6, 'julio': 7, 'agosto': 8,
+            'septiembre': 9, 'octubre': 10, 'noviembre': 11, 'diciembre': 12
+        }
+
+        # Obtener el número del mes
+        num_month = months[month.lower()]
+
+        # Crear un objeto datetime
+        fecha_objeto = datetime(int(year), num_month, int(day))
+
+        # Formatear la fecha en el formato deseado (year-month-day)
+        fecha_formateada = fecha_objeto.strftime("%Y-%m-%d")
+
+        return fecha_formateada  # Salida: yyyy-mm-dd
+    else:
+        return "No se pudo encontrar una fecha válida en el formato proporcionado."
