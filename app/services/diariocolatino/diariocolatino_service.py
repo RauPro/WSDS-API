@@ -30,6 +30,7 @@ class DiarioColatinoScrapper:
             h1 = soup.find('h1', class_='name post-title entry-title')
             h1 = h1 if h1 and h1.find('span') else None
             article = soup.find('div', class_='entry')
+            date_news = soup.find('span', class_='tie-date').text
             paragraphs = article.find_all('p') if article else []
             news_text = ' '.join(paragraph.text for paragraph in paragraphs)
             new = {
@@ -37,7 +38,8 @@ class DiarioColatinoScrapper:
                 'text': article.text if article else news_text,
                 'source':  'diariocolatino.com' if h1 else 'diariocolatino.com',
                 'url': url,
-                'sheet_id': url
+                'sheet_id': url,
+                'date_news': date_news
             }
             return new
 

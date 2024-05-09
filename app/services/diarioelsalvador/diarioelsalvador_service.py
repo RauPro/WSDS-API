@@ -27,7 +27,9 @@ class DiarioElSalvadorScrapper:
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
             title = soup.find('h1')
-            content = soup.find('div', class_='entry-content')
+            content = soup.find('div', class_='entry-content')  
+            date_news = soup.find('div', class_='jeg_meta_date')       
+            date_final = date_news.a.get_text(strip=True)        
             paragraphs = content.find_all('p') if content else []
             news_text = ' '.join(paragraph.text for paragraph in paragraphs)
             article_data = {
@@ -35,7 +37,8 @@ class DiarioElSalvadorScrapper:
                 'text': news_text,
                 'source':  'diarioelsalvador.com' if title else 'diarioelsalvador.com',
                 'url': url,
-                'sheet_id': url
+                'sheet_id': url,
+                'date_news': date_final
             }
             return article_data
 

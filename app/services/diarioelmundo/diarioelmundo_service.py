@@ -30,13 +30,17 @@ class DiarioElMundoScrapper:
             h1 = soup.find('h1', class_='title-article')
             subtitle = soup.find('div', class_='article-subTitle')
             article = soup.find('div', class_='article-body')
+            date_news = soup.find('time', class_='publishing-date')
+            date_string= date_news.get_text(strip=True)
+            date_final, hora = date_string.rsplit(' - ', 1)
             new = {
                 'title': h1.text if h1 else 'No se encontró el título',
                 #'subtitle': subtitle.text if subtitle else 'No se encontró el subtítulo',
                 'text': article.text if article else 'No se encontró el texto del articulo',
                 'source':  'diario.elmundo.sv',
                 'url': url,
-                'sheet_id': url
+                'sheet_id': url,
+                'date_news': date_final
                 }
             return new
 if __name__ == '__main__':
