@@ -33,7 +33,9 @@ class DiarioElMundoScrapper:
             article = soup.find('div', class_='article-body')
             
             date_news, hour_news = soup.find('time', class_='publishing-date').get_text(strip=True).rsplit(' - ', 1)
+            print(date_news)
             date_final = date_formate(date_news)
+            print(date_final)
             
             new = {
                 'title': h1.text if h1 else 'No se encontró el título',

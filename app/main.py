@@ -71,8 +71,12 @@ async def colatino(search: str = "", date: str = ""):
 
 # Route for Diario El Mundo scraper
 @app.get("/diarioelmundo")
-async def diarioelmundo(search: str = "", date: str = ""):
-    scraper = DiarioElMundoScrapper(search)
+async def diarioelmundo(search: str = "", date_start: str = "", date_end: str = ""):
+    if date_start is None:
+        date_start = date.today().isoformat()
+        date_end= date.today().isoformat()
+    
+    scraper = DiarioElMundoScrapper(search, date_start, date_end)
     return await perform_scraping(scraper)
 
 
@@ -128,8 +132,8 @@ def global_search_static(search: str = "Feminicidio",  date_start: str = "", dat
         date_end= date.today().isoformat()
         
     scrapers = [
-        DiarioElSalvadorScrapper(search, date_start, date_end),
-        DiarioColatinoScrapper(search, date_start, date_end),
+        #DiarioElSalvadorScrapper(search, date_start, date_end),
+        #DiarioColatinoScrapper(search, date_start, date_end),
         DiarioElMundoScrapper(search, date_start, date_end)
     ]
     content_urls = []
