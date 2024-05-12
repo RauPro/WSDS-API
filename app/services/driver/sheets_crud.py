@@ -24,3 +24,9 @@ def update_sheet(sheet_id: str, sheet_data: SheetEntry):
 
 def delete_sheet(sheet_id: str):
     collection.delete_one({"id": sheet_id})
+
+def create_or_update_sheet(sheet: SheetEntry, existing_sheet):
+    if existing_sheet is None:
+        create_sheet(sheet)
+    else:
+        update_sheet(sheet.id, sheet)
