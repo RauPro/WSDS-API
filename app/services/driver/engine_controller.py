@@ -6,14 +6,16 @@ import os
 class CustomEngine:
     def __init__(self, engine, query , date_start= '', date_end='', num = 10,):
         self.base_url = 'https://customsearch.googleapis.com/customsearch/v1'
-        date_start = datetime.strptime(date_start, "%Y-%m-%d").strftime("%Y%m%d")
-        date_end = datetime.strptime(date_end, "%Y-%m-%d").strftime("%Y%m%d")
         
         formatted = date_start
+
         if date_start != '' or date_end != '':
+            date_start = datetime.strptime(date_start, "%Y-%m-%d").strftime("%Y%m%d")
+            date_end = datetime.strptime(date_end, "%Y-%m-%d").strftime("%Y%m%d")
             formatted = f'date:r:{date_start}:{date_end}'
         else:
             formatted = 'date'
+            
         self.params = {
             'num': str(num),
             'hl': 'es',

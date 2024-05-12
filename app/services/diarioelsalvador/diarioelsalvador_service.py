@@ -10,8 +10,8 @@ from datetime import datetime
 
 class DiarioElSalvadorScrapper:
     def __init__(self, query='Feminicidio',  
-                 date_start: str = datetime.today().strftime('%Y-%m-%d'), 
-                 date_end: str = datetime.today().strftime('%Y-%m-%d'), num_results = 10):
+                 date_start: str = "", 
+                 date_end: str = "", num_results = 10):
         self.engine = 'WSDS-DiarioElSalvador'
         self.query = query
         self.date_start = date_start
@@ -22,7 +22,6 @@ class DiarioElSalvadorScrapper:
         ce = CustomEngine(engine=os.environ.get(self.engine), query=self.query, date_start = self.date_start, date_end= self.date_end, num=self.num_results)
         return ce.search()
 
-
     def get_url_content(self, url):
         response = requests.get(url)
         if response.status_code == 200:
@@ -32,9 +31,13 @@ class DiarioElSalvadorScrapper:
             paragraphs = content.find_all('p') if content else []
             news_text = ' '.join(paragraph.text for paragraph in paragraphs)
             
-            date_news = soup.find('div', class_='jeg_meta_date')       
-            date_text = date_news.a.get_text(strip=True)    
-            date_final = date_formate(date_text)
+            date_news = soup.find('div', class_='jeg_meta_date')    
+            
+            if(date_news is not None):
+                date_news = date_news.a.get_text(strip=True)        
+                date_news = date_formate(date_news)    
+            else:
+                date_news =  "No se encontro fecha"
             
             article_data = {
                 'title': title.text.strip() if title else 'No se encontró el título',
@@ -42,7 +45,7 @@ class DiarioElSalvadorScrapper:
                 'source':  'diarioelsalvador.com' if title else 'diarioelsalvador.com',
                 'url': url,
                 'sheet_id': url,
-                'date_news': date_final
+                'date_news': date_news
             }
             return article_data
 
@@ -74,7 +77,7 @@ def date_formate(date_text):
 
         return fecha_formateada  # Salida: yyyy-mm-dd
     else:
-        return "No se pudo encontrar una fecha válida en el formato proporcionado."
+        return "No se pudo encontrar una fecha válida en el formato proporcionado. Diario el salvaador"
 
 if __name__ == '__main__':
     scrapper = DiarioElSalvadorScrapper()

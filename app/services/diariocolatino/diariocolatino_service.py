@@ -12,8 +12,8 @@ from datetime import datetime
 class DiarioColatinoScrapper:
     ## look
     def __init__(self, query='Feminicidio', 
-                 date_start: str = datetime.today().strftime('%Y-%m-%d'), 
-                 date_end: str = datetime.today().strftime('%Y-%m-%d'),  num_results = 10):
+                 date_start: str = "", 
+                 date_end: str = "",  num_results = 10):
         self.engine = 'WSDS-Colatino'
         self.query = query
         self.date_start = date_start
@@ -21,8 +21,9 @@ class DiarioColatinoScrapper:
         self.num_results = num_results
 
     def init_search_urls(self):
-        ce = CustomEngine(engine=os.environ.get(self.engine), query=self.query, date_start = self.date_start, date_end= self.date_end ,num=self.num_results)
+        ce = CustomEngine(engine=os.environ.get(self.engine), query=self.query, date_start = self.date_start, date_end= self.date_end, num=self.num_results)
         return ce.search()
+        
 
     def get_url_content(self, url):
         response = requests.get(url)
@@ -31,7 +32,14 @@ class DiarioColatinoScrapper:
             h1 = soup.find('h1', class_='name post-title entry-title')
             h1 = h1 if h1 and h1.find('span') else None
             article = soup.find('div', class_='entry')
-            date_news = date_formate(soup.find('span', class_='tie-date').text)
+            date_news = soup.find('span', class_='tie-date')
+            
+            if(date_news is not None):
+                date_news = date_formate(date_news.text)
+            else:
+                date_news =  "No se encontro fecha"
+            
+            
             paragraphs = article.find_all('p') if article else []
             news_text = ' '.join(paragraph.text for paragraph in paragraphs)
             new = {
@@ -73,4 +81,4 @@ def date_formate(date_text):
 
         return fecha_formateada  # Salida: yyyy-mm-dd
     else:
-        return "No se pudo encontrar una fecha válida en el formato proporcionado."
+        return "No se pudo encontrar una fecha válida en el formato proporcionado: Diario Colatino"

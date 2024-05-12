@@ -312,8 +312,8 @@ mocked_list = [{'title': 'Arrestan a cuatro peligrosos pandilleros deportados de
 
 @app.get("/model_gemma")
 async def model_gemma(search: str = "Feminicidio", gemma_mode: str = "accurate",
-                      date_start: str = datetime.today().strftime('%Y-%m-%d'),
-                      date_end: str = datetime.today().strftime('%Y-%m-%d')
+                      date_start: str = "",
+                      date_end: str = ""
                       ):
     # return test_create_notice(global_search_static())
     news = global_search_static(search, date_start, date_end)

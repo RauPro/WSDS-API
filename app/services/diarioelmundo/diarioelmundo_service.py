@@ -12,8 +12,8 @@ from datetime import datetime
 
 class DiarioElMundoScrapper:
     def __init__(self, query='Feminicidio', 
-                 date_start: str = datetime.today().strftime('%Y-%m-%d'), 
-                 date_end: str = datetime.today().strftime('%Y-%m-%d'), num_results = 10):
+                 date_start: str = "", 
+                 date_end: str = "", num_results = 10):
         self.engine = 'WSDS-ElMundo'
         self.query = query
         self.date_start = date_start
@@ -37,16 +37,11 @@ class DiarioElMundoScrapper:
             
             if(raw_date is not None):
                 date_news = raw_date.get_text(strip=True).rsplit(' - ', 1)[0]
+                date_news = date_formate(date_news)
             else:
-                date_news = self.date_start
+                date_news = "No se encontro fecha"
             
-            print(date_news)
 
-            date_final = date_formate(date_news)
-            print(date_final)
-
-           
-            
             new = {
                 'title': h1.text if h1 else 'No se encontró el título',
                 #'subtitle': subtitle.text if subtitle else 'No se encontró el subtítulo',
@@ -54,9 +49,10 @@ class DiarioElMundoScrapper:
                 'source':  'diario.elmundo.sv',
                 'url': url,
                 'sheet_id': url,
-                'date_news': date_final,
+                'date_news': date_news,
                 }
             return new
+        
 if __name__ == '__main__':
     cl = DiarioElMundoScrapper()
     urls = cl.init_search_urls()
@@ -75,22 +71,18 @@ def date_formate(date_text):
         month = match.group(3)
         year = match.group(4)
 
-        # Mapear el nombre del mes a su número correspondiente
         months = {
             'enero': 1, 'febrero': 2, 'marzo': 3, 'abril': 4,
             'mayo': 5, 'junio': 6, 'julio': 7, 'agosto': 8,
             'septiembre': 9, 'octubre': 10, 'noviembre': 11, 'diciembre': 12
         }
 
-        # Obtener el número del mes
         num_month = months[month.lower()]
 
-        # Crear un objeto datetime
         fecha_objeto = datetime(int(year), num_month, int(day))
 
-        # Formatear la fecha en el formato deseado (year-month-day)
         fecha_formateada = fecha_objeto.strftime("%Y-%m-%d")
 
         return fecha_formateada  # Salida: yyyy-mm-dd
     else:
-        return "No se pudo encontrar una fecha válida en el formato proporcionado."
+        return "No se pudo encontrar una fecha válida en el formato proporcionado: Diario EL mundo"
