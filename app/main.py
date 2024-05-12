@@ -12,6 +12,7 @@ from fastapi_pagination import Page, add_pagination, paginate
 from datetime import date
 
 from app.controllers import indicators_controller, news_controller
+from app.controllers import sheets_controller
 # Importing specific scrapping services
 from app.controllers.notices_controller import test_create_notice
 from app.services.db_service import DatabaseService
@@ -306,11 +307,12 @@ async def model_gemma(search: str = "Feminicidio", gemma_mode: str = "accurate")
     # return test_create_notice(global_search_static())
     news = global_search_static(search)
     #print(news)
-    return StreamingResponse(test_create_notice(news, gemma_mode), media_type="text/event-stream")
-
+   # return StreamingResponse(test_create_notice(news, gemma_mode), media_type="text/event-stream")
+    return mocked_list
 
 app.include_router(indicators_controller.router)
 app.include_router(news_controller.router)
+app.include_router(sheets_controller.router)
 add_pagination(app)
 
 if __name__ == '__main__':
