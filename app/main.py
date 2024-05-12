@@ -12,6 +12,7 @@ from fastapi_pagination import Page, add_pagination, paginate
 from datetime import date
 
 from app.controllers import indicators_controller, news_controller
+from app.controllers import sheets_controller
 # Importing specific scrapping services
 from app.controllers.notices_controller import test_create_notice
 from app.services.db_service import DatabaseService
@@ -37,8 +38,6 @@ origins = [
     "http://localhost:4200"
 ]
 add_pagination(app)
-
-
 # Configuring CORS middleware
 app.add_middleware(CORSMiddleware,
                    allow_origins=origins,
@@ -85,8 +84,8 @@ async def diarioelsalvador(search: str = "Feminicidio", date: str = ""):
 
 # Route for global search across multiple sources
 @app.get("/global")
-async def global_search(search: str = "Feminicidio" 
-                        # , date: str = datetime.today() 
+async def global_search(search: str = "Feminicidio"
+                        # , date: str = datetime.today()
                         ) -> StreamingResponse:
     scrapers = [
         DiarioElSalvadorScrapper(search),
@@ -105,13 +104,11 @@ async def global_search(search: str = "Feminicidio"
             scraper_urls = await perform_scraping(scraper)
             for url_content in scraper_urls:
                 if url_content is not None:
-                    ##url_content['tag'] = search
-                    ##if date is None or date == url_content['date']:
-                        url_content['tag'] = search
-                        url_content['date'] = datetime.today().strftime('%Y-%m-%d')
-                        saved = create_new(url_content)
-                        yield f"data: {json.dumps({'saved': saved, 'scraper': scrapersName[i]})}\n\n"
-                        yield f"data: {json.dumps({'status': 'starting', 'scraper': scrapersName[i]})}\n\n"
+                    url_content['tag'] = search
+                    url_content['date'] = datetime.today().strftime('%Y-%m-%d')
+                    saved = create_new(url_content)
+                    yield f"data: {json.dumps({'saved': saved, 'scraper': scrapersName[i]})}\n\n"
+                    yield f"data: {json.dumps({'status': 'starting', 'scraper': scrapersName[i]})}\n\n"
             content_urls.extend(scraper_urls)
             yield f"data: {json.dumps({'status': 'completed', 'scraper': scrapersName[i], 'results': [url for url in scraper_urls if url is not None]})}\n\n"
 
@@ -126,7 +123,7 @@ def global_search_static(search: str = "Feminicidio",  date_start: str = "", dat
     if date_start is None:
         date_start = date.today().isoformat()
         date_end= date.today().isoformat()
-        
+
     scrapers = [
         DiarioElSalvadorScrapper(search, date_start, date_end),
         DiarioColatinoScrapper(search, date_start, date_end),
@@ -138,7 +135,7 @@ def global_search_static(search: str = "Feminicidio",  date_start: str = "", dat
         for url_content in scraper_urls:
             if url_content is not None:
                 url_content['tag'] = search
-                #url_content['date'] = date_start 
+                #url_content['date'] = date_start
         content_urls.extend(scraper_urls)
     return content_urls
 
@@ -310,18 +307,19 @@ mocked_list = [{'title': 'Arrestan a cuatro peligrosos pandilleros deportados de
 
 
 @app.get("/model_gemma")
-async def model_gemma(search: str = "Feminicidio", gemma_mode: str = "accurate", 
+async def model_gemma(search: str = "Feminicidio", gemma_mode: str = "accurate",
                       date_start: str = datetime.today().strftime('%Y-%m-%d'),
                       date_end: str = datetime.today().strftime('%Y-%m-%d')
                       ):
     # return test_create_notice(global_search_static())
     news = global_search_static(search, date_start, date_end)
     #print(news)
-    #return StreamingResponse(test_create_notice(news, gemma_mode), media_type="text/event-stream")
-    return news
+    return StreamingResponse(test_create_notice(news, gemma_mode), media_type="text/event-stream")
+
 
 app.include_router(indicators_controller.router)
 app.include_router(news_controller.router)
+app.include_router(sheets_controller.router)
 add_pagination(app)
 
 if __name__ == '__main__':
