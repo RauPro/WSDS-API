@@ -129,8 +129,8 @@ def global_search_static(search: str = "Feminicidio",  date_start: str = "", dat
         date_end= date.today().isoformat()
 
     scrapers = [
-        #DiarioElSalvadorScrapper(search, date_start, date_end),
-        #DiarioColatinoScrapper(search, date_start, date_end),
+        DiarioElSalvadorScrapper(search, date_start, date_end),
+        DiarioColatinoScrapper(search, date_start, date_end),
         DiarioElMundoScrapper(search, date_start, date_end)
     ]
     content_urls = []
