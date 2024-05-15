@@ -3,7 +3,7 @@ from uuid import uuid4
 from fastapi import FastAPI, HTTPException, APIRouter
 
 from ..models import Prompt, New
-from ..services.driver.news_crud import create_new, get_news, get_new_by_id, update_new, delete_new
+from ..services.driver.news_crud import create_new, get_news, get_new_by_id, update_new, delete_new, get_news_sheets
 
 router = APIRouter()
 @router.post("/news/")
@@ -14,6 +14,9 @@ def create(new: New):
 @router.get("/news/")
 def read_all():
     return get_news()
+@router.get("/news-sheet/")
+def read_all():
+    return get_news_sheets()
 
 @router.get("/news/{new_id}")
 def read(new_id: str):
