@@ -1,5 +1,6 @@
 from app.models import Prompt, New
 from app.services.db_service import DatabaseService
+from app.services.driver.sheets_crud import get_sheet_by_id
 
 DatabaseService()
 collection = DatabaseService.get_news_collection()
@@ -20,6 +21,14 @@ def create_new(new_data: New):
 def get_news():
     lv = collection.find({}, {'_id': 0})
     return list(lv)
+
+
+def get_news_sheets():
+    lv = collection.find({}, {'_id': 0})
+    lv = list(lv)
+    for it in lv:
+        it["sheet"] = get_sheet_by_id(it["url"])
+    return lv
 
 def get_new_by_id(new_id: str):
     return collection.find_one({"url": new_id}, {'_url': 0})
