@@ -31,6 +31,11 @@ class Prompt(BaseModel):
     id: Optional[str] = ObjectId()
 
 
+class PromptEntry(BaseModel):
+    indicators:List[Prompt]
+    name: str
+    id: Optional[str] = ObjectId()
+
 class Sheet(BaseModel):
     indicator_name: str
     response: str
