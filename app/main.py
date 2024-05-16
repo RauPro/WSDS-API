@@ -161,7 +161,7 @@ mocked_list = [
 
 
 @app.get("/model_gemma")
-async def model_gemma(search: str = "Feminicidio", gemma_mode: str = "accurate",
+def model_gemma(search: str = "Feminicidio", gemma_mode: str = "accurate",
                       date_start: str = "",
                       date_end: str = ""
                       ):

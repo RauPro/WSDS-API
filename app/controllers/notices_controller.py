@@ -8,7 +8,7 @@ import requests
 import os
 from ..services import DiarioElMundoScrapper
 from ..services.driver.news_crud import create_new
-from ..services.driver.sheets_crud import create_sheet, create_sheet_priority
+from ..services.driver.sheets_crud import create_sheet, create_sheet_priority, get_sheet_by_id
 import json
 from bson import ObjectId  # Assuming you are using PyMongo
 
@@ -35,6 +35,9 @@ async def test_create_notice(list_news: [New], gemma_mode: str):
     if gemma_mode == GemmaMode.ACCURATE.value:
         ans =[]
         for new in list_news:
+            existing_sheet = get_sheet_by_id(new["url"])
+            if existing_sheet is not None and existing_sheet["priority"] == 3:
+                continue
             new_ = generate_answer(new)
             new_to_save = deepcopy(new)
             new_to_save["sheet_id"] = new.get("url")
@@ -66,15 +69,36 @@ async def test_create_notice(list_news: [New], gemma_mode: str):
     elif gemma_mode == GemmaMode.STANDARD.value:
         ans = []
         for new in list_news:
+            existing_sheet = get_sheet_by_id(new["url"])
+
             new_to_save = deepcopy(new)
             new_to_save["sheet_id"] = new.get("url")
             debugger = create_new(new_to_save)
             #print(debugger)
+            if existing_sheet is not None and existing_sheet["priority"] == 4:
+                new["sheet"] = existing_sheet
+                ans.append(new)
+                json_data = json.dumps(ans, cls=JSONEncoder)
+                yield f"data: {json_data}\n\n"
+                continue
             new = generate_standard_answer(new)
             new["sheet_id"] = new.get("url")
             new["sheet"]["priority"] = PrioritySheet.STANDARD.value
             ans.append(new)
-            yield f"data: {json.dumps(ans)}\n\n"
+            try:
+                json_data = json.dumps(ans, cls=JSONEncoder)
+                yield f"data: {json_data}\n\n"
+            except Exception as e:
+                # Log the exception or handle it accordingly
+                print(f"Failed to create sheet: {e}")
+                raise
+            try:
+                debugger = create_sheet_priority(new["sheet"])
+                print(debugger)
+            except Exception as e:
+                # Log the exception or handle it accordingly
+                print(f"Failed to create sheet: {e}")
+                raise
 
 
 
