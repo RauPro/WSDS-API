@@ -45,7 +45,7 @@ class DiarioElSalvadorScrapper:
                 'source':  'diarioelsalvador.com' if title else 'diarioelsalvador.com',
                 'url': url,
                 'sheet_id': url,
-                'date_news': date_news
+                'date': date_news
             }
             return article_data
 

@@ -49,7 +49,7 @@ class DiarioElMundoScrapper:
                 'source':  'diario.elmundo.sv',
                 'url': url,
                 'sheet_id': url,
-                'date_news': date_news,
+                'date': date_news,
                 }
             return new
         
