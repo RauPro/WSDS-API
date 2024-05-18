@@ -58,7 +58,7 @@ def create_sheet_priority(sheet: SheetEntry):
         else:
             return({"message": "Cannot overwrite existing sheet unless priority is 4"})
 
-    elif sheet["priority"] > 3:
+    elif sheet["priority"] == 4:
         create_or_update_sheet(sheet, existing_sheet)
         return({"message": "Sheet created/updated successfully", "data": sheet})
 
