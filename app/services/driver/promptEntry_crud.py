@@ -1,12 +1,15 @@
 from app.models import PromptEntry
 from app.services.db_service import DatabaseService
+from app.services.driver.id_generator import ObjectId
 
 
     
 DatabaseService()
 collection = DatabaseService.get_promptEntry_collection()
 def create_promptEntry(prompt_data: PromptEntry):
+    prompt_data.id =  ObjectId()
     collection.insert_one(prompt_data.dict())
+    
 
 def get_promptsEntry():
     lv = collection.find({}, {'_id': 0})

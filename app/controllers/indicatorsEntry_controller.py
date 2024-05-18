@@ -1,5 +1,4 @@
 from uuid import uuid4
-
 from fastapi import FastAPI, HTTPException, APIRouter
 
 from ..models import PromptEntry

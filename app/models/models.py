@@ -28,13 +28,13 @@ class NoticeResponse(BaseModel):
 class Prompt(BaseModel):
     indicator_name: str
     prompt: str
-    id: Optional[str] = ObjectId()
+    id: str 
 
 
 class PromptEntry(BaseModel):
     indicators:List[Prompt]
     name: str
-    id: Optional[str] = ObjectId()
+    id: str
 
 class Sheet(BaseModel):
     indicator_name: str
