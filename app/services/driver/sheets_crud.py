@@ -24,7 +24,8 @@ def get_sheet_by_id(sheet_id: str):
 
 
 def update_sheet(sheet_id: str, sheet_data: SheetEntry):
-    return collection.update_one({"id": sheet_id}, {"$set": sheet_data})
+    debugger = collection.update_one({"id": sheet_id}, {"$set": sheet_data})
+    return debugger
 
 
 def delete_sheet(sheet_id: str):

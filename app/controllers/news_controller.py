@@ -7,7 +7,7 @@ from fastapi import FastAPI, HTTPException, APIRouter, Query
 from ..models import Prompt, New, SheetEntry
 from ..services.driver.news_crud import create_new, get_news, get_new_by_id, update_new, delete_new, get_news_sheets, \
     delete_date
-from ..utils import serialize_new
+from ..utils import serialize_new, is_search_in_text
 
 router = APIRouter()
 
@@ -32,12 +32,16 @@ def read_all_saved(search_word: str = None, filters_sheet: SheetEntry = None, da
                    date_end: str = None):
     if filters_sheet is not None:
         filters_sheet = filters_sheet.dict()
+    enable_search = False
+    for it in filters_sheet["indicators"]:
+        if it["response"] != "":
+            enable_search = True
     date_regex = r"^.{4}-.{2}-.{2}$"
     #list_saved_news = get_news_sheets()
     list_saved_news = get_news_sheets()
     if search_word is not None:
-        list_saved_news = [news for news in list_saved_news if search_word in news["text"]]
-    if filters_sheet is not None:
+        list_saved_news = [new for new in list_saved_news if is_search_in_text(search_word, new["text"])]
+    if filters_sheet is not None and enable_search:
         filtered_news = []
         for new in list_saved_news:
             if new["sheet"] is not None:

@@ -45,9 +45,9 @@ def delete(sheet_id: str):
 
 
 @router.post("/generate_sheet/")
-def geneate_sheet(new: New = None):
+def generate_sheet(new: New = None):
     try:
-        return generate_answer(new)
+        return generate_answer(new.dict())
 
     except Exception as e:
         print(f"Failed to create sheet: {e}")

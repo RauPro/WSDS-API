@@ -35,14 +35,18 @@ async def test_create_notice(list_news: [New], gemma_mode: str):
     if gemma_mode == GemmaMode.ACCURATE.value:
         ans =[]
         for new in list_news:
-            existing_sheet = get_sheet_by_id(new["url"])
-            if existing_sheet is not None and existing_sheet["priority"] == 3:
-                continue
-            new_ = generate_answer(new)
             new_to_save = deepcopy(new)
             new_to_save["sheet_id"] = new.get("url")
             debugger = create_new(new_to_save)
             #print(debugger)
+            existing_sheet = get_sheet_by_id(new["url"])
+            if existing_sheet is not None and existing_sheet["priority"] <= PrioritySheet.ACCURATE.value:
+                new["sheet"] = existing_sheet
+                ans.append(new)
+                json_data = json.dumps(ans, cls=JSONEncoder)
+                yield f"data: {json_data}\n\n"
+                continue
+            new_ = generate_answer(new)
             new["sheet"] = {}
             new["sheet_id"] = new.get("url")
             new["sheet"]["indicators"] = new_
@@ -75,7 +79,7 @@ async def test_create_notice(list_news: [New], gemma_mode: str):
             new_to_save["sheet_id"] = new.get("url")
             debugger = create_new(new_to_save)
             #print(debugger)
-            if existing_sheet is not None and existing_sheet["priority"] == 4:
+            if existing_sheet is not None and existing_sheet["priority"] <= PrioritySheet.STANDARD.value:
                 new["sheet"] = existing_sheet
                 ans.append(new)
                 json_data = json.dumps(ans, cls=JSONEncoder)

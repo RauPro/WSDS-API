@@ -8,3 +8,13 @@ def serialize_new(new):
             if isinstance(value, ObjectId):
                 new[key] = str(value)
     return new
+
+
+def is_search_in_text(phrase: str, text: str):
+    """Check if phrase in text using the words"""
+    phrase = phrase.split()
+    is_on_text = True
+    for word in phrase:
+        if word.lower() not in text.lower():
+            is_on_text = False
+    return is_on_text
