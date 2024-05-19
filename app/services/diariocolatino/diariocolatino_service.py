@@ -48,7 +48,7 @@ class DiarioColatinoScrapper:
                 'source':  'diariocolatino.com' if h1 else 'diariocolatino.com',
                 'url': url,
                 'sheet_id': url,
-                'date_news': date_news
+                'date': date_news
             }
             return new
 
