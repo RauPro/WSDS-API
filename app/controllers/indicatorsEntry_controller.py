@@ -2,6 +2,7 @@ from uuid import uuid4
 from fastapi import FastAPI, HTTPException, APIRouter
 
 from ..models import PromptEntry
+from ..services.driver.global_setting_crud import generate_new_global
 from ..services.driver.promptEntry_crud import create_promptEntry, get_promptsEntry, get_promptEntry_by_id, update_promptEntry, delete_promptEntry
 router = APIRouter()
 @router.post("/promptsEntry/")
@@ -33,7 +34,7 @@ def update(prompt_id: str, prompt: PromptEntry):
 def delete(prompt_id: str):
     deleted = delete_promptEntry(prompt_id)
     if deleted:
+        generate_new_global()
         return {"message": "Prompt deleted successfully."}
-
     else:
         raise HTTPException(status_code=404, detail="Setting not found")
