@@ -6,7 +6,7 @@ from ..services.driver.promptEntry_crud import create_promptEntry, get_promptsEn
 router = APIRouter()
 @router.post("/promptsEntry/")
 def create(prompt: PromptEntry):
-    create_promptEntry(prompt)
+    created = create_promptEntry(prompt)
     return {"message": "Prompt created successfully", "data": prompt.dict()}
 
 @router.get("/promptsEntry/")
@@ -22,10 +22,18 @@ def read(prompt_id: str):
 
 @router.put("/promptsEntry/{prompt_id}")
 def update(prompt_id: str, prompt: PromptEntry):
-    update_promptEntry(prompt_id, prompt)
-    return {"message": "Prompt updated successfully."}
+    updated = update_promptEntry(prompt_id, prompt.dict())
+    if updated.modified_count > 0:
+        return {"message": "Prompt Entry updated successfully."}
+    else:
+        raise HTTPException(status_code=404, detail="Setting not found")
+
 
 @router.delete("/promptsEntry/{prompt_id}")
 def delete(prompt_id: str):
-    delete_promptEntry(prompt_id)
-    return {"message": "Prompt deleted successfully."}
+    deleted = delete_promptEntry(prompt_id)
+    if deleted:
+        return {"message": "Prompt deleted successfully."}
+
+    else:
+        raise HTTPException(status_code=404, detail="Setting not found")
