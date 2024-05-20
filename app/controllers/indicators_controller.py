@@ -12,7 +12,10 @@ def create(prompt: Prompt):
 
 @router.get("/prompts/")
 def read_all():
-    return get_prompts()
+    result = get_prompts()
+    if result is not None:
+        return result
+    raise HTTPException(status_code=404, detail="Prompt not found")
 
 @router.get("/prompts/{prompt_id}")
 def read(prompt_id: str):
