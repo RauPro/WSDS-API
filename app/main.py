@@ -11,8 +11,9 @@ from starlette.responses import StreamingResponse
 from fastapi_pagination import Page, add_pagination, paginate
 from datetime import date
 
-from app.controllers import indicators_controller, news_controller
-from app.controllers import sheets_controller
+from app.controllers import indicators_controller, news_controller, sheets_controller, indicatorsEntry_controller, \
+    global_setting_controller
+#from app.controllers import sheets_controller
 # Importing specific scrapping services
 from app.controllers.notices_controller import test_create_notice
 from app.services.db_service import DatabaseService
@@ -172,6 +173,9 @@ async def model_gemma(search: str = "Feminicidio", gemma_mode: str = "accurate",
 app.include_router(indicators_controller.router)
 app.include_router(news_controller.router)
 app.include_router(sheets_controller.router)
+app.include_router(global_setting_controller.router)
+app.include_router(indicatorsEntry_controller.router)
+
 add_pagination(app)
 
 if __name__ == '__main__':
