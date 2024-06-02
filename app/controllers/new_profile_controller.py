@@ -22,7 +22,7 @@ class JSONEncoder(json.JSONEncoder):
 
 # router = APIRouter()
 
-def create_notice(r: NoticeRequest):
+def create_notice(r: NewProfileRequest):
     token = os.environ.get("OLLAMA-Token")
     query = requests.post(url="http://localhost:3000/ollama/api/generate",
                           json={"prompt": r.prompt, "model": r.model, "stream": False},
@@ -125,7 +125,7 @@ def generate_answer(new):
         new_generated = {
             "indicator_name": p.get("indicator_name")
         }
-        new_ = NoticeRequest(
+        new_ = NewProfileRequest(
             model="gemma:7b",
             prompt=generate_prompt(new.get("title"), new.get("text"), p.get("prompt")),
             stream=False,
@@ -188,7 +188,7 @@ def classification_standard_model(raw_sheet, url):
     return response
 
 def generate_standard_answer(new):
-    new_ = NoticeRequest(
+    new_ = NewProfileRequest(
         model="gemma:7b",
         prompt=generate_prompt_standard(new.get("title"), new.get("text")),
         stream=False,
