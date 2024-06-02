@@ -3,27 +3,27 @@ from fastapi import FastAPI, HTTPException, APIRouter
 
 from ..models import PromptEntry
 from ..services.driver.global_setting_crud import generate_new_global
-from ..services.driver.promptEntry_crud import create_promptEntry, get_promptsEntry, get_promptEntry_by_id, update_promptEntry, delete_promptEntry
+from ..services.driver.prompt_entry_crud import create_prompt_entry, get_prompts_entry, get_prompt_entry_by_id, update_prompt_entry, delete_prompt_entry
 router = APIRouter()
 @router.post("/promptsEntry/")
 def create(prompt: PromptEntry):
-    created = create_promptEntry(prompt)
+    created = create_prompt_entry(prompt)
     return {"message": "Prompt created successfully", "data": prompt.dict()}
 
 @router.get("/promptsEntry/")
 def read_all():
-    return get_promptsEntry()
+    return get_prompts_entry()
 
 @router.get("/promptsEntry/{prompt_id}")
 def read(prompt_id: str):
-    prompt = get_promptEntry_by_id(prompt_id)
+    prompt = get_prompt_entry_by_id(prompt_id)
     if prompt is not None:
         return prompt
     raise HTTPException(status_code=404, detail="Prompt not found")
 
 @router.put("/promptsEntry/{prompt_id}")
 def update(prompt_id: str, prompt: PromptEntry):
-    updated = update_promptEntry(prompt_id, prompt.dict())
+    updated = update_prompt_entry(prompt_id, prompt.dict())
     if updated.modified_count > 0:
         return {"message": "Prompt Entry updated successfully."}
     else:
@@ -32,7 +32,7 @@ def update(prompt_id: str, prompt: PromptEntry):
 
 @router.delete("/promptsEntry/{prompt_id}")
 def delete(prompt_id: str):
-    deleted = delete_promptEntry(prompt_id)
+    deleted = delete_prompt_entry(prompt_id)
     if deleted:
         generate_new_global()
         return {"message": "Prompt deleted successfully."}
