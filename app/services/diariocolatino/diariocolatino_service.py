@@ -1,13 +1,12 @@
 import os
 import re
+from datetime import datetime
 from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 
 from ..driver.engine_controller import CustomEngine
-from datetime import date
-from datetime import datetime
 
 
 class DiarioColatinoScrapper:

@@ -1,5 +1,4 @@
 from app.models import Prompt
-from app.models import PromptEntry
 from app.services.db_service import DatabaseService
 from app.services.driver.global_setting_crud import get_setting
 from app.services.driver.id_generator import ObjectId

@@ -1,8 +1,5 @@
 import pandas as pd
-from typing import List
-
 from fastapi import APIRouter
-from pydantic import BaseModel
 from starlette.responses import FileResponse
 
 from app.services.driver.news_crud import get_news_sheets
@@ -12,7 +9,13 @@ router = APIRouter()
 
 
 @router.get("/report/")
-def generate_report():
+def generate_report() -> FileResponse:
+    """
+    Generate an Excel report based on prompt entries and sheet entries.
+
+    Returns:
+        FileResponse: The generated Excel report as a file response.
+    """
     prompt_entry = get_prompts()
     sheet_entries = get_news_sheets()
 
@@ -46,4 +49,3 @@ def generate_report():
 
     return FileResponse(path=file_path, filename="reporte.xlsx",
                         media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-

@@ -12,6 +12,7 @@ class GemmaMode(Enum):
     ACCURATE = "accurate"
     STANDARD = "standard"
 
+
 class PrioritySheet(Enum):
     """
     Represents the priority levels for sheets.

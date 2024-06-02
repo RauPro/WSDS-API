@@ -1,6 +1,5 @@
 from app.models import PromptEntry
 from app.services.db_service import DatabaseService
-from app.services.driver.id_generator import ObjectId
 
 DatabaseService()
 collection = DatabaseService.get_prompt_entry_collection()

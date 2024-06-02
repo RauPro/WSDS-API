@@ -1,2 +1,2 @@
-from .models import *
 from .enums import *
+from .models import *

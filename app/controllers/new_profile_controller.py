@@ -1,28 +1,39 @@
-import json
 from copy import deepcopy
+import json
+import os
+from copy import deepcopy
+
+import requests
+from bson import ObjectId
 
 from ..models.enums import GemmaMode, PrioritySheet
 from ..models.models import *
 from ..prompts.main_prompt import *
-import requests
-import os
-from ..services import DiarioElMundoScrapper
 from ..services.driver.news_crud import create_new
-from ..services.driver.sheets_crud import create_sheet, create_sheet_priority, get_sheet_by_id
-import json
-from bson import ObjectId  # Assuming you are using PyMongo
+from ..services.driver.sheets_crud import create_sheet_priority, get_sheet_by_id
+
 
 class JSONEncoder(json.JSONEncoder):
-    """ Extend json-encoder class to handle ObjectId type """
+    """
+    Extend json-encoder class to handle ObjectId type.
+    """
+
     def default(self, obj):
         if isinstance(obj, ObjectId):
             return str(obj)
-        # Let the base class default method raise the TypeError
         return json.JSONEncoder.default(self, obj)
 
-# router = APIRouter()
 
-def create_notice(r: NewProfileRequest):
+def create_notice(r: NewProfileRequest) -> dict:
+    """
+    Create a notice by sending a request to the Ollama API.
+
+    Args:
+        r (NewProfileRequest): The request data for creating the notice.
+
+    Returns:
+        dict: The response from the Ollama API.
+    """
     token = os.environ.get("OLLAMA-Token")
     query = requests.post(url="http://localhost:3000/ollama/api/generate",
                           json={"prompt": r.prompt, "model": r.model, "stream": False},
@@ -30,15 +41,24 @@ def create_notice(r: NewProfileRequest):
     return query.json()
 
 
-async def test_create_notice(list_news: [New], gemma_mode: str):
+async def test_create_notice(list_news: [New], gemma_mode: str) -> None:
+    """
+    Create notices based on the provided list of news and Gemma mode.
+
+    Args:
+        list_news ([New]): The list of news items to create notices for.
+        gemma_mode (str): The Gemma mode to use for creating notices.
+
+    Yields:
+        str: The JSON data of the created notices.
+    """
     yield f"data: True\n\n"
     if gemma_mode == GemmaMode.ACCURATE.value:
-        ans =[]
+        ans = []
         for new in list_news:
             new_to_save = deepcopy(new)
             new_to_save["sheet_id"] = new.get("url")
             debugger = create_new(new_to_save)
-            #print(debugger)
             existing_sheet = get_sheet_by_id(new["url"])
             if existing_sheet is not None and existing_sheet["priority"] <= PrioritySheet.ACCURATE.value:
                 new["sheet"] = existing_sheet
@@ -57,28 +77,22 @@ async def test_create_notice(list_news: [New], gemma_mode: str):
                 json_data = json.dumps(ans, cls=JSONEncoder)
                 yield f"data: {json_data}\n\n"
             except Exception as e:
-                # Log the exception or handle it accordingly
                 print(f"Failed to create sheet: {e}")
                 raise
             try:
                 debugger = create_sheet_priority(new["sheet"])
                 print(debugger)
             except Exception as e:
-                # Log the exception or handle it accordingly
                 print(f"Failed to create sheet: {e}")
                 raise
-        #print(ans)
         print("Done")
-        #return ans
     elif gemma_mode == GemmaMode.STANDARD.value:
         ans = []
         for new in list_news:
             existing_sheet = get_sheet_by_id(new["url"])
-
             new_to_save = deepcopy(new)
             new_to_save["sheet_id"] = new.get("url")
             debugger = create_new(new_to_save)
-            #print(debugger)
             if existing_sheet is not None and existing_sheet["priority"] <= PrioritySheet.STANDARD.value:
                 new["sheet"] = existing_sheet
                 ans.append(new)
@@ -93,20 +107,28 @@ async def test_create_notice(list_news: [New], gemma_mode: str):
                 json_data = json.dumps(ans, cls=JSONEncoder)
                 yield f"data: {json_data}\n\n"
             except Exception as e:
-                # Log the exception or handle it accordingly
                 print(f"Failed to create sheet: {e}")
                 raise
             try:
                 debugger = create_sheet_priority(new["sheet"])
                 print(debugger)
             except Exception as e:
-                # Log the exception or handle it accordingly
                 print(f"Failed to create sheet: {e}")
                 raise
 
 
+def generate_prompt(title: str, description: str, field: str) -> str:
+    """
+    Generate a prompt for analyzing a news article.
 
-def generate_prompt(title, description, field):
+    Args:
+        title (str): The title of the news article.
+        description (str): The description of the news article.
+        field (str): The specific field to analyze.
+
+    Returns:
+        str: The generated prompt.
+    """
     base_prompt = f"""
     Noticia:
     Título: {title}
@@ -118,7 +140,16 @@ def generate_prompt(title, description, field):
     return full_prompt
 
 
-def generate_answer(new):
+def generate_answer(new: dict) -> list:
+    """
+    Generate answers for a news article based on predefined prompts.
+
+    Args:
+        new (dict): The news article data.
+
+    Returns:
+        list: The generated answers for each prompt.
+    """
     prompts = get_prompts()
     ans = []
     for p in prompts:
@@ -133,12 +164,20 @@ def generate_answer(new):
         gemma_ans = create_notice(new_)
         new_generated["response"] = gemma_ans["response"]
         ans.append(new_generated)
-        #print(new_)
-        #print()
     return ans
 
 
-def classification_standard_model(raw_sheet, url):
+def classification_standard_model(raw_sheet: str, url: str) -> dict:
+    """
+    Classify a news article using a standard model.
+
+    Args:
+        raw_sheet (str): The raw text of the news article.
+        url (str): The URL of the news article.
+
+    Returns:
+        dict: The classified data of the news article.
+    """
     data = {
         "Clasificación": "N/A",
         "Título": "N/A",
@@ -176,7 +215,7 @@ def classification_standard_model(raw_sheet, url):
 
     ans = []
     for key, value in data.items():
-        response ={
+        response = {
             "indicator_name": key,
             "response": value
         }
@@ -187,7 +226,17 @@ def classification_standard_model(raw_sheet, url):
     }
     return response
 
-def generate_standard_answer(new):
+
+def generate_standard_answer(new: dict) -> dict:
+    """
+    Generate a standard answer for a news article.
+
+    Args:
+        new (dict): The news article data.
+
+    Returns:
+        dict: The news article data with the generated standard answer.
+    """
     new_ = NewProfileRequest(
         model="gemma:7b",
         prompt=generate_prompt_standard(new.get("title"), new.get("text")),
@@ -196,4 +245,3 @@ def generate_standard_answer(new):
     get_raw_ans = create_notice(new_)
     new["sheet"] = classification_standard_model(get_raw_ans.get("response"), new.get("url"))
     return new
-

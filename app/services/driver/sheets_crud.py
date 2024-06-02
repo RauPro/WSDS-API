@@ -1,4 +1,4 @@
-from app.models import Prompt, SheetEntry
+from app.models import SheetEntry
 from app.services.db_service import DatabaseService
 
 DatabaseService()
@@ -99,25 +99,25 @@ def create_sheet_priority(sheet: SheetEntry):
     existing_sheet = get_sheet_by_id(sheet["id"])
     if sheet["priority"] == 1:
         create_or_update_sheet(sheet, existing_sheet)
-        return({"message": "Sheet created/updated successfully with priority 1", "data": sheet})
+        return ({"message": "Sheet created/updated successfully with priority 1", "data": sheet})
 
     elif sheet["priority"] == 2:
         if existing_sheet is None or existing_sheet.get('priority', 999) < 2:
             create_or_update_sheet(sheet, existing_sheet)
-            return({"message": "Sheet created/updated successfully with priority 2", "data": sheet})
+            return ({"message": "Sheet created/updated successfully with priority 2", "data": sheet})
         else:
-            return({"message": "Cannot overwrite existing sheet with higher priority"})
+            return ({"message": "Cannot overwrite existing sheet with higher priority"})
 
     elif sheet["priority"] == 3:
         if (existing_sheet is not None and existing_sheet.get('priority', 999) == 4) or existing_sheet is None:
             create_or_update_sheet(sheet, existing_sheet)
-            return({"message": "Sheet updated successfully with priority 3", "data": sheet})
+            return ({"message": "Sheet updated successfully with priority 3", "data": sheet})
         else:
-            return({"message": "Cannot overwrite existing sheet unless priority is 4"})
+            return ({"message": "Cannot overwrite existing sheet unless priority is 4"})
 
     elif sheet["priority"] == 4:
         create_or_update_sheet(sheet, existing_sheet)
-        return({"message": "Sheet created/updated successfully", "data": sheet})
+        return ({"message": "Sheet created/updated successfully", "data": sheet})
 
     else:
-        return({"message": "Sorry, we can't save this sheet due to priority rules"})
+        return ({"message": "Sorry, we can't save this sheet due to priority rules"})

@@ -1,6 +1,3 @@
-import re
-
-from app.services.driver.prompts_crud import get_prompts
 def generate_prompt_standard(title, description):
     prompt = f"""
     Noticia:
@@ -41,9 +38,6 @@ En cualquier caso que la información no esté disponible o no se especifique en
 
     """
     return prompt
-
-
-
 
 
 if __name__ == "__main__":

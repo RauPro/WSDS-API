@@ -1,9 +1,9 @@
-import json
 import os
 from typing import List
 
-from bs4 import BeautifulSoup
 import requests
+from bs4 import BeautifulSoup
+
 from ..driver.engine_controller import CustomEngine
 
 

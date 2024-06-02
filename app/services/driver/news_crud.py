@@ -1,9 +1,11 @@
-from app.models import Prompt, New
+from app.models import New
 from app.services.db_service import DatabaseService
 from app.services.driver.sheets_crud import get_sheet_by_id
 
 DatabaseService()
 collection = DatabaseService.get_news_collection()
+
+
 def create_new(new_data: New):
     """
     Creates a new document in the 'news' collection or updates an existing one.
@@ -30,6 +32,7 @@ def create_new(new_data: New):
         else:
             return {"status": "no action", "id": new_data.get("url")}
 
+
 def get_news():
     """
     Retrieves all documents from the 'news' collection.
@@ -54,6 +57,7 @@ def get_news_sheets():
         it["sheet"] = get_sheet_by_id(it["url"])
     return lv
 
+
 def get_new_by_id(new_id: str):
     """
     Retrieves a single document from the 'news' collection by its ID.
@@ -65,6 +69,7 @@ def get_new_by_id(new_id: str):
         dict: The document matching the provided ID, excluding the '_url' field, or None if not found.
     """
     return collection.find_one({"url": new_id}, {'_url': 0})
+
 
 def update_new(new_id: str, new_data: New):
     """
@@ -79,6 +84,7 @@ def update_new(new_id: str, new_data: New):
     """
     return collection.update_one({"url": new_id}, {"$set": new_data.dict()})
 
+
 def delete_new(new_id: str):
     """
     Deletes a document from the 'news' collection by its ID.
@@ -87,6 +93,7 @@ def delete_new(new_id: str):
         new_id (str): The ID of the document to delete.
     """
     collection.delete_one({"url": new_id})
+
 
 def delete_date(document_id, field_name):
     """
