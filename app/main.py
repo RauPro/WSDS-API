@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import add_pagination
 from starlette.responses import StreamingResponse
 
-from app.controllers import indicators_controller, news_controller, sheets_controller, indicatorsEntry_controller, \
+from app.controllers import indicators_controller, news_controller, sheets_controller, indicators_entry_controller, \
     global_setting_controller, report_controller
 # from app.controllers import sheets_controller
 # Importing specific scrapping services
@@ -173,7 +173,7 @@ app.include_router(indicators_controller.router)
 app.include_router(news_controller.router)
 app.include_router(sheets_controller.router)
 app.include_router(global_setting_controller.router)
-app.include_router(indicatorsEntry_controller.router)
+app.include_router(indicators_entry_controller.router)
 app.include_router(report_controller.router)
 add_pagination(app)
 
