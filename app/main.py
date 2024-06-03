@@ -14,7 +14,7 @@ from app.controllers import indicators_controller, news_controller, sheets_contr
     global_setting_controller, report_controller, driver_controller
 # from app.controllers import sheets_controller
 # Importing specific scrapping services
-from app.controllers.new_profile_controller import test_create_notice
+from app.controllers.new_profile_controller import create_news_gemma
 from app.services.db_service import DatabaseService
 from app.services.driver.news_crud import create_new
 from .env import env

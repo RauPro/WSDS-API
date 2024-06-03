@@ -1,3 +1,4 @@
+import re
 from copy import deepcopy
 import json
 import os
@@ -10,6 +11,7 @@ from ..models.enums import GemmaMode, PrioritySheet
 from ..models.models import *
 from ..prompts.main_prompt import *
 from ..services.driver.news_crud import create_new
+from ..services.driver.prompts_crud import get_prompts
 from ..services.driver.sheets_crud import create_sheet_priority, get_sheet_by_id
 
 
@@ -41,7 +43,7 @@ def create_notice(r: NewProfileRequest) -> dict:
     return query.json()
 
 
-async def test_create_notice(list_news: [New], gemma_mode: str) -> None:
+async def create_news_gemma(list_news: [New], gemma_mode: str) -> None:
     """
     Create notices based on the provided list of news and Gemma mode.
 

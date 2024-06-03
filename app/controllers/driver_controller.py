@@ -2,32 +2,56 @@ import json
 from datetime import date, datetime
 import random
 from typing import Generator
-
 from fastapi import HTTPException, APIRouter
 from starlette.responses import StreamingResponse
-
-from app.controllers import test_create_notice
+from app.controllers import create_news_gemma
 from app.services import ElSalvadorScraper, DiarioColatinoScrapper, DiarioElSalvadorScrapper, DiarioElMundoScrapper
 from app.services.driver.news_crud import create_new
 
 router = APIRouter()
 
-async def perform_scraping(scraper):
+async def perform_scraping(scraper) -> list:
+    """
+    Perform web scraping using the provided scraper.
+
+    Args:
+        scraper: The web scraper instance.
+
+    Returns:
+        list: A list of scraped content URLs.
+    """
     urls = scraper.init_search_urls()
     content_urls = [scraper.get_url_content(url) for url in urls]
     return content_urls
 
-
-# Route for Diario Colatino scraper
 @router.get("/colatino")
-async def colatino(search: str = "", date: str = ""):
+async def colatino(search: str = "", date: str = "") -> list:
+    """
+    Route for Diario Colatino scraper.
+
+    Args:
+        search (str): The search term (default: "").
+        date (str): The date (default: "").
+
+    Returns:
+        list: A list of scraped content URLs.
+    """
     scraper = DiarioColatinoScrapper(search)
     return await perform_scraping(scraper)
 
-
-# Route for Diario El Mundo scraper
 @router.get("/diarioelmundo")
-async def diarioelmundo(search: str = "", date_start: str = "", date_end: str = ""):
+async def diarioelmundo(search: str = "", date_start: str = "", date_end: str = "") -> list:
+    """
+    Route for Diario El Mundo scraper.
+
+    Args:
+        search (str): The search term (default: "").
+        date_start (str): The start date (default: "").
+        date_end (str): The end date (default: "").
+
+    Returns:
+        list: A list of scraped content URLs.
+    """
     if date_start is None:
         date_start = date.today().isoformat()
         date_end = date.today().isoformat()
@@ -35,19 +59,32 @@ async def diarioelmundo(search: str = "", date_start: str = "", date_end: str = 
     scraper = DiarioElMundoScrapper(search, date_start, date_end)
     return await perform_scraping(scraper)
 
-
-# Route for Diario El Salvador scraper
 @router.get("/diarioelsalvador")
-async def diarioelsalvador(search: str = "Feminicidio", date: str = ""):
+async def diarioelsalvador(search: str = "Feminicidio", date: str = "") -> list:
+    """
+    Route for Diario El Salvador scraper.
+
+    Args:
+        search (str): The search term (default: "Feminicidio").
+        date (str): The date (default: "").
+
+    Returns:
+        list: A list of scraped content URLs.
+    """
     scraper = DiarioElSalvadorScrapper(search)
     return await perform_scraping(scraper)
 
-
-# Route for global search across multiple sources
 @router.get("/global")
-async def global_search(search: str = "Feminicidio"
-                        # , date: str = datetime.today()
-                        ) -> StreamingResponse:
+async def global_search(search: str = "Feminicidio") -> StreamingResponse:
+    """
+    Route for global search across multiple sources.
+
+    Args:
+        search (str): The search term (default: "Feminicidio").
+
+    Returns:
+        StreamingResponse: A streaming response containing the scraped content URLs.
+    """
     scrapers = [
         DiarioElSalvadorScrapper(search),
         DiarioColatinoScrapper(search),
@@ -79,8 +116,18 @@ async def global_search(search: str = "Feminicidio"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
+def global_search_static(search: str = "Feminicidio", date_start: str = "", date_end: str = "") -> list:
+    """
+    Perform a static global search across multiple sources.
 
-def global_search_static(search: str = "Feminicidio", date_start: str = "", date_end: str = ""):
+    Args:
+        search (str): The search term (default: "Feminicidio").
+        date_start (str): The start date (default: "").
+        date_end (str): The end date (default: "").
+
+    Returns:
+        list: A list of scraped content URLs.
+    """
     if date_start is None:
         date_start = date.today().isoformat()
         date_end = date.today().isoformat()
@@ -96,16 +143,22 @@ def global_search_static(search: str = "Feminicidio", date_start: str = "", date
         for url_content in scraper_urls:
             if url_content is not None:
                 url_content['tag'] = search
-                # url_content['date'] = date_start
         content_urls.extend(scraper_urls)
     return content_urls
 
-
-
 @router.get("/model_gemma")
-async def model_gemma(search: str = "Feminicidio", gemma_mode: str = "accurate",
-                      date_start: str = "",
-                      date_end: str = ""
-                      ):
+async def model_gemma(search: str = "Feminicidio", gemma_mode: str = "accurate", date_start: str = "", date_end: str = "") -> StreamingResponse:
+    """
+    Route for applying the Gemma model to scraped news.
+
+    Args:
+        search (str): The search term (default: "Feminicidio").
+        gemma_mode (str): The Gemma mode (default: "accurate").
+        date_start (str): The start date (default: "").
+        date_end (str): The end date (default: "").
+
+    Returns:
+        StreamingResponse: A streaming response containing the processed news data.
+    """
     news = global_search_static(search, date_start, date_end)
-    return StreamingResponse(test_create_notice(news, gemma_mode), media_type="text/event-stream")
+    return StreamingResponse(create_news_gemma(news, gemma_mode), media_type="text/event-stream")
