@@ -25,7 +25,10 @@ def generate_report() -> FileResponse:
 
     report_rows = []
     for entry in sheet_entries:
-        row = {'id': entry["url"]}
+        row = {'id': entry["url"],
+               'date': entry["date"],
+               'text': entry["text"],
+               'tag': entry["tag"]}
 
         if entry["sheet"] is not None:
             for indicator in entry["sheet"]["indicators"]:

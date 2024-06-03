@@ -105,8 +105,8 @@ def read_all_saved(search_word: str = None, filters_sheet: SheetEntry = None, da
     if (date_end is not None and date_start is not None) and (date_end != "" and date_start != ""):
         ans = []
         for new in list_saved_news:
-            if re.match(date_regex, new["date"]) and datetime.strptime(new["date"],
-                                                                       '%Y-%m-%d').date() >= date_start_obj and datetime.strptime(
+            if "date" in new and re.match(date_regex, new["date"]) and datetime.strptime(new["date"],
+                                                                                         '%Y-%m-%d').date() >= date_start_obj and datetime.strptime(
                 new["date"], '%Y-%m-%d').date() <= date_end_obj:
                 ans.append(new)
         list_saved_news = ans
