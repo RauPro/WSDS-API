@@ -18,13 +18,6 @@ async def perform_scraping(scraper):
     return content_urls
 
 
-# Route for proof of concept using ElSalvadorScraper
-@router.get("/poc")
-async def poc(search: str = ""):
-    scraper = ElSalvadorScraper(search)
-    return await perform_scraping(scraper)
-
-
 # Route for Diario Colatino scraper
 @router.get("/colatino")
 async def colatino(search: str = "", date: str = ""):
