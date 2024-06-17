@@ -1,25 +1,35 @@
-import re
-from datetime import datetime
-from uuid import uuid4
+from fastapi import HTTPException, APIRouter
 
-from fastapi import FastAPI, HTTPException, APIRouter, Query
-
-from ..models import Prompt, New, SheetEntry
-from ..services.driver.global_setting_crud import init_global, update_id_global, get_setting
-from ..services.driver.news_crud import create_new, get_news, get_new_by_id, update_new, delete_new, get_news_sheets, \
-    delete_date
-from ..utils import serialize_new, is_search_in_text
+from ..services.driver.global_setting_crud import update_id_global, get_setting
 
 router = APIRouter()
 
 
 @router.post("/init_global/")
 def create():
+    """
+    Initialize the global settings.
+
+    Returns:
+        str: A message indicating the initialization status.
+    """
     return "Init"
 
 
 @router.put("/update_global/{setting_id}")
 def update(setting_id: str):
+    """
+    Update the global setting with the provided setting ID.
+
+    Args:
+        setting_id (str): The ID of the setting to update.
+
+    Returns:
+        dict: A dictionary containing a success message if the setting is updated.
+
+    Raises:
+        HTTPException: If the setting is not found (status code 404).
+    """
     updated = update_id_global(setting_id)
     if updated:
         return {"message": "Setting set successfully."}
@@ -30,4 +40,10 @@ def update(setting_id: str):
 
 @router.get("/global_id/")
 def get_setting_global():
+    """
+    Get the current global setting.
+
+    Returns:
+        dict: The current global setting.
+    """
     return get_setting()

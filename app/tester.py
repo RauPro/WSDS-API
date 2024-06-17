@@ -55,7 +55,7 @@ saved = {
     "id": "url_test"
 }
 
-filters  = {
+filters = {
     "indicators": [
         {
             "indicator_name": "Clasificacion",
@@ -105,11 +105,11 @@ filters  = {
             "indicator_name": "Agresor o Sospechoso",
             "response": "Información actualizada sobre el agresor o sospechoso."
         },
-{
+        {
             "indicator_name": "Agresor sexo",
             "response": "Información actualizada sobre el agresor o sospechoso."
         },
-{
+        {
             "indicator_name": "sexo Sospechoso",
             "response": "Información actualizada sobre el agresor o sospechoso."
         }
@@ -125,7 +125,7 @@ for filter in filters["indicators"]:
 
     for it in saved["indicators"]:
         if indicator_to_find == it["indicator_name"] and response_to_find in it["response"]:
-            ans+=1
+            ans += 1
 
 print(ans)
 
