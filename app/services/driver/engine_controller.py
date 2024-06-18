@@ -33,7 +33,7 @@ class CustomEngine:
         print(urls)
     """
 
-    def __init__(self, engine, query, date_start='', date_end='', num=10, ):
+    def __init__(self, engine, query, date_start='', date_end='', num=10, start_from = 0):
         """
         Initializes a new instance of the CustomEngine class.
 
@@ -64,10 +64,11 @@ class CustomEngine:
             'sort': formatted,
             # r:yyyymmdd:yyyymmdd
             'oq': query,
-            'key': 'AIzaSyBhAxY8-IuaOF_B9qunF4TZUwpgizi8XuE'
+            'key': 'AIzaSyBhAxY8-IuaOF_B9qunF4TZUwpgizi8XuE',
+            'start': start_from
         }
 
-    def search(self) -> List[str]:
+    def search(self) -> tuple:
         """
        Performs the custom search and returns a list of URLs from the search results.
 
@@ -82,7 +83,7 @@ class CustomEngine:
             urls.append(element["link"])
         print(urls)
         print(response.url)
-        return urls
+        return urls, json_data.get("searchInformation").get("totalResults", "10")
 
 
 if __name__ == "__main__":
