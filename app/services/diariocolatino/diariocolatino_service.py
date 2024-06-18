@@ -42,7 +42,7 @@ class DiarioColatinoScrapper:
 
     def __init__(self, query='Feminicidio',
                  date_start: str = "",
-                 date_end: str = "", num_results=10):
+                 date_end: str = "", num_results=10, start_from = 0):
         """
         Initializes a new instance of the DiarioColatinoScrapper class.
 
@@ -57,6 +57,7 @@ class DiarioColatinoScrapper:
         self.date_start = date_start
         self.date_end = date_end
         self.num_results = num_results
+        self.start_from = start_from
 
     def init_search_urls(self) -> List[str]:
         """
@@ -66,7 +67,7 @@ class DiarioColatinoScrapper:
             List[str]: A list of search result URLs.
         """
         ce = CustomEngine(engine=os.environ.get(self.engine), query=self.query, date_start=self.date_start,
-                          date_end=self.date_end, num=self.num_results)
+                          date_end=self.date_end, num=self.num_results, start_from=self.start_from)
         return ce.search()
 
     def get_url_content(self, url: str) -> dict:
