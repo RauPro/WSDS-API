@@ -33,10 +33,8 @@ DatabaseService()
 env.set_env()
 
 # Defining origins for CORS
-origins = [
-    "http://127.0.0.1:8000",
-    "http://localhost:4200"
-]
+origins = ["*"]
+
 add_pagination(app)
 # Configuring CORS middleware
 app.add_middleware(CORSMiddleware,

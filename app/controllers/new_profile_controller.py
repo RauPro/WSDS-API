@@ -37,8 +37,8 @@ def create_notice(r: NewProfileRequest) -> dict:
         dict: The response from the Ollama API.
     """
     token = os.environ.get("OLLAMA-Token")
-    base_url = 'http://host.docker.internal'
-    query = requests.post(url= base_url +"/ollama/api/generate",
+    base_url = 'host.docker.internal'
+    query = requests.post(url= "http://" + base_url + "3000" +":3000/ollama/api/generate",
                           json={"prompt": r.prompt, "model": r.model, "stream": False},
                           headers={"Authorization": f"Bearer {token}"})
     return query.json()
