@@ -101,7 +101,7 @@ def delete(sheet_id: str) -> dict:
 
 
 @router.post("/generate_sheet/")
-def generate_sheet(new: New = None) -> dict:
+def generate_sheet(new: New = None):
     """
     Generate a sheet based on the provided news data.
 
