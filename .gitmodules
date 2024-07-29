@@ -1,0 +1,3 @@
+[submodule "WSDS-FRONT"]
+	path = WSDS-FRONT
+	url = https://github.com/Emmlyy/WSDS-FRONT.git
