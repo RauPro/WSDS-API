@@ -183,7 +183,6 @@ def get_pagination_number(search: str = "Feminicidio", date_start: str = "", dat
     for scraper in scrapers:
         results = scraper.init_search_urls()
         total_results += int(results[1])
-
     return total_results
 
 
